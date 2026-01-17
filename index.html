@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알뜰런 유지비 계산기</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-pattern"></div>
+    
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">📱</span>
+                <h1>알뜰런 계산기</h1>
+            </div>
+            <p class="subtitle">5가지 구매 방식을 한눈에 비교해보세요</p>
+        </header>
+
+        <div class="ad-section">
+            <div class="ad-slot" data-ad-position="top">광고 영역 (상단 배너)</div>
+        </div>
+
+        <main class="main-content">
+            <!-- 입력 섹션 -->
+            <div class="input-section">
+                <!-- 단말기 정보 -->
+                <section class="card input-card">
+                    <div class="card-header">
+                        <span class="card-icon">📲</span>
+                        <h2>단말기 정보</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="devicePrice">단말기 출고가</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="devicePrice" value="1500000">
+                                    <span class="unit">원</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="selfPurchasePrice">자급제 구매가</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="selfPurchasePrice" value="1350000">
+                                    <span class="unit">원</span>
+                                </div>
+                                <span class="hint">쿠팡/11번가 등 자급제 가격</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 공통 설정 -->
+                <section class="card input-card">
+                    <div class="card-header">
+                        <span class="card-icon">⚙️</span>
+                        <h2>공통 설정</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="totalPeriod">총 사용 기간</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="totalPeriod" value="24" min="12" max="48">
+                                    <span class="unit">개월</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="mvnoPlanCost">알뜰폰 요금제</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="mvnoPlanCost" value="15000">
+                                    <span class="unit">원/월</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="usimCost">유심/eSIM 비용</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="usimCost" value="5000">
+                                    <span class="unit">원</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 공시지원금 조건 -->
+                <section class="card input-card card-public">
+                    <div class="card-header">
+                        <span class="card-icon">💵</span>
+                        <h2>공시지원금 조건</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="publicSubsidy">공시지원금</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="publicSubsidy" value="300000">
+                                    <span class="unit">원</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="publicExtraSubsidy">추가지원금</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="publicExtraSubsidy" value="200000">
+                                    <span class="unit">원</span>
+                                </div>
+                                <span class="hint warning">⚠️ 6개월 이전 해지 시 반환</span>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="publicStoreSubsidy">판매점 지원금</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="publicStoreSubsidy" value="100000">
+                                    <span class="unit">원</span>
+                                </div>
+                                <span class="hint">반환 불필요</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="publicMinMonths">의무 유지 기간</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="publicMinMonths" value="6" min="1" max="24">
+                                    <span class="unit">개월</span>
+                                </div>
+                                <span class="hint">보통 6개월</span>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="publicPlanCost">공시 요금제 (고가)</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="publicPlanCost" value="85000">
+                                    <span class="unit">원/월</span>
+                                </div>
+                                <span class="hint">의무 유지 기간 동안</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="publicLowPlanCost">이후 요금제 (저가)</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="publicLowPlanCost" value="55000">
+                                    <span class="unit">원/월</span>
+                                </div>
+                                <span class="hint">의무 유지 후 하향 가능</span>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="publicVasCost">부가서비스 금액</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="publicVasCost" value="15000">
+                                    <span class="unit">원/월</span>
+                                </div>
+                                <span class="hint">의무 가입 부가서비스</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="publicVasMonths">부가서비스 유지 기간</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="publicVasMonths" value="3" min="0" max="24">
+                                    <span class="unit">개월</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="publicHighCombineDiscount">결합할인 (고가)</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="publicHighCombineDiscount" value="0">
+                                    <span class="unit">원/월</span>
+                                </div>
+                                <span class="hint">고가 요금제 결합할인</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="publicLowCombineDiscount">결합할인 (저가)</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="publicLowCombineDiscount" value="0">
+                                    <span class="unit">원/월</span>
+                                </div>
+                                <span class="hint">저가 요금제 결합할인</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 선택약정 조건 -->
+                <section class="card input-card card-select">
+                    <div class="card-header">
+                        <span class="card-icon">📝</span>
+                        <h2>선택약정 조건</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="selectExtraSubsidy">추가지원금</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="selectExtraSubsidy" value="200000">
+                                    <span class="unit">원</span>
+                                </div>
+                                <span class="hint warning">⚠️ 6개월 이전 해지 시 반환</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="selectStoreSubsidy">판매점 지원금</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="selectStoreSubsidy" value="150000">
+                                    <span class="unit">원</span>
+                                </div>
+                                <span class="hint">반환 불필요</span>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="selectDiscountRate">선택약정 할인율</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="selectDiscountRate" value="25">
+                                    <span class="unit">%</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="selectMinMonths">의무 유지 기간</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="selectMinMonths" value="6" min="1" max="24">
+                                    <span class="unit">개월</span>
+                                </div>
+                                <span class="hint">요금제 유지 필수 기간</span>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="selectPlanCost">선택약정 요금제 (고가)</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="selectPlanCost" value="69000">
+                                    <span class="unit">원/월</span>
+                                </div>
+                                <span class="hint">의무 유지 기간 동안 요금제</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="selectLowPlanCost">이후 요금제 (저가)</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="selectLowPlanCost" value="45000">
+                                    <span class="unit">원/월</span>
+                                </div>
+                                <span class="hint">의무 유지 후 변경 가능한 요금제</span>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="selectVasCost">부가서비스 금액</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="selectVasCost" value="10000">
+                                    <span class="unit">원/월</span>
+                                </div>
+                                <span class="hint">의무 가입 부가서비스</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="selectVasMonths">부가서비스 유지 기간</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="selectVasMonths" value="2" min="0" max="24">
+                                    <span class="unit">개월</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="selectHighCombineDiscount">결합할인 (고가)</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="selectHighCombineDiscount" value="0">
+                                    <span class="unit">원/월</span>
+                                </div>
+                                <span class="hint">고가 요금제 결합할인</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="selectLowCombineDiscount">결합할인 (저가)</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="selectLowCombineDiscount" value="0">
+                                    <span class="unit">원/월</span>
+                                </div>
+                                <span class="hint">저가 요금제 결합할인</span>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="mvnoMoveMonths">알뜰런 이동 시점</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="mvnoMoveMonths" value="6" min="1" max="24">
+                                    <span class="unit">개월 후</span>
+                                </div>
+                                <span class="hint">이 기간 후 알뜰폰 이동</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="ad-section">
+                <div class="ad-slot" data-ad-position="mid">광고 영역 (중간 배너)</div>
+            </div>
+
+            <!-- 5가지 방식 비교 -->
+            <section class="comparison-section">
+                <h2 class="section-title">
+                    <span class="title-icon">⚖️</span>
+                    5가지 방식 비교
+                </h2>
+                
+                <div class="comparison-cards">
+                    <!-- 방식 1: 공시지원금 -->
+                    <div class="method-card" data-method="public-subsidy">
+                        <div class="method-header">
+                            <div class="method-rank" id="rank1">1</div>
+                            <div class="method-badge badge-danger" id="badge1">비추천</div>
+                        </div>
+                        <h3 class="method-title">공시지원금</h3>
+                        <p class="method-desc" id="method1Desc">공시지원금 + 24개월 고가 요금제</p>
+                        
+                        <div class="method-total">
+                            <span class="total-label">총 비용</span>
+                            <span class="total-value" id="method1Total">3,040,000원</span>
+                        </div>
+                        
+                        <div class="method-monthly">
+                            <span class="monthly-label">월 평균</span>
+                            <span class="monthly-value" id="method1Monthly">126,667원</span>
+                        </div>
+
+                        <div class="method-breakdown">
+                            <div class="breakdown-row">
+                                <span>단말기</span>
+                                <span id="method1Device">1,000,000원</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>고가 요금제 (<span id="method1HighMonths">6</span>개월)</span>
+                                <span id="method1HighPlan">510,000원</span>
+                            </div>
+                            <div class="breakdown-row highlight">
+                                <span>저가 요금제 (<span id="method1LowMonths">18</span>개월)</span>
+                                <span id="method1LowPlan">990,000원</span>
+                            </div>
+                            <div class="breakdown-row vas">
+                                <span>부가서비스 (<span id="method1VasMonths">3</span>개월)</span>
+                                <span id="method1Vas">45,000원</span>
+                            </div>
+                        </div>
+                        <button class="detail-btn" onclick="calculator.showDetailModal(1)">📋 상세보기</button>
+                    </div>
+
+                    <!-- 방식 2: 선택약정 (추가지원금 없음) -->
+                    <div class="method-card" data-method="select-contract">
+                        <div class="method-header">
+                            <div class="method-rank" id="rank2">2</div>
+                            <div class="method-badge badge-warning" id="badge2">보통</div>
+                        </div>
+                        <h3 class="method-title">선택약정</h3>
+                        <p class="method-desc" id="method2Desc">선택약정 25% 할인 + 24개월 유지</p>
+                        
+                        <div class="method-total">
+                            <span class="total-label">총 비용</span>
+                            <span class="total-value" id="method2Total">3,030,000원</span>
+                        </div>
+                        
+                        <div class="method-monthly">
+                            <span class="monthly-label">월 평균</span>
+                            <span class="monthly-value" id="method2Monthly">126,250원</span>
+                        </div>
+
+                        <div class="method-breakdown">
+                            <div class="breakdown-row">
+                                <span>단말기</span>
+                                <span id="method2Device">1,500,000원</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>고가 요금제 (<span id="method2HighMonths">6</span>개월)</span>
+                                <span id="method2HighPlan">310,500원</span>
+                            </div>
+                            <div class="breakdown-row highlight">
+                                <span>저가 요금제 (<span id="method2LowMonths">18</span>개월)</span>
+                                <span id="method2LowPlan">607,500원</span>
+                            </div>
+                            <div class="breakdown-row vas">
+                                <span>부가서비스 (<span id="method2VasMonths">2</span>개월)</span>
+                                <span id="method2Vas">20,000원</span>
+                            </div>
+                        </div>
+                        <button class="detail-btn" onclick="calculator.showDetailModal(2)">📋 상세보기</button>
+                    </div>
+
+                    <!-- 방식 3: 선택약정 + 추가지원금 -->
+                    <div class="method-card" data-method="select-extra">
+                        <div class="method-header">
+                            <div class="method-rank" id="rank3">3</div>
+                            <div class="method-badge badge-info" id="badge3">추가지원</div>
+                        </div>
+                        <h3 class="method-title">선택약정 + 추가지원금</h3>
+                        <p class="method-desc" id="method3Desc">선택약정 25% + 추가지원금 (고가 6개월 필수) + 24개월</p>
+                        
+                        <div class="method-total">
+                            <span class="total-label">총 비용</span>
+                            <span class="total-value" id="method3Total">2,830,000원</span>
+                        </div>
+                        
+                        <div class="method-monthly">
+                            <span class="monthly-label">월 평균</span>
+                            <span class="monthly-value" id="method3Monthly">117,917원</span>
+                        </div>
+
+                        <div class="method-breakdown">
+                            <div class="breakdown-row">
+                                <span>단말기</span>
+                                <span id="method3Device">1,300,000원</span>
+                            </div>
+                            <div class="breakdown-row subsidy">
+                                <span>추가지원금</span>
+                                <span id="method3ExtraSubsidy">-200,000원</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>고가 요금제 (<span id="method3HighMonths">6</span>개월)</span>
+                                <span id="method3HighPlan">310,500원</span>
+                            </div>
+                            <div class="breakdown-row highlight">
+                                <span>저가 요금제 (<span id="method3LowMonths">18</span>개월)</span>
+                                <span id="method3LowPlan">607,500원</span>
+                            </div>
+                            <div class="breakdown-row vas">
+                                <span>부가서비스 (<span id="method3VasMonths">2</span>개월)</span>
+                                <span id="method3Vas">20,000원</span>
+                            </div>
+                        </div>
+                        <button class="detail-btn" onclick="calculator.showDetailModal(3)">📋 상세보기</button>
+                    </div>
+
+                    <!-- 방식 4: 선택약정 + 알뜰런 -->
+                    <div class="method-card featured" data-method="select-mvno">
+                        <div class="method-header">
+                            <div class="method-rank" id="rank4">4</div>
+                            <div class="method-badge badge-success" id="badge4">추천</div>
+                        </div>
+                        <h3 class="method-title">선택약정 + 알뜰런</h3>
+                        <p class="method-desc">선택약정 후 <span id="monthsDisplay">6</span>개월 뒤 알뜰폰 이동</p>
+                        
+                        <div class="method-total">
+                            <span class="total-label">총 비용</span>
+                            <span class="total-value" id="method4Total">2,167,500원</span>
+                        </div>
+                        
+                        <div class="method-monthly">
+                            <span class="monthly-label">월 평균</span>
+                            <span class="monthly-value" id="method4Monthly">90,313원</span>
+                        </div>
+
+                        <div class="method-breakdown">
+                            <div class="breakdown-row">
+                                <span>단말기</span>
+                                <span id="method4Device">1,500,000원</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>고가 요금제 (<span id="method4HighMonths">6</span>개월)</span>
+                                <span id="method4HighPlan">310,500원</span>
+                            </div>
+                            <div class="breakdown-row highlight" id="method4LowPlanRow">
+                                <span>저가 요금제 (<span id="method4LowMonths">0</span>개월)</span>
+                                <span id="method4LowPlan">0원</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>알뜰폰 (<span id="method4MvnoMonths">18</span>개월)</span>
+                                <span id="method4Mvno">270,000원</span>
+                            </div>
+                            <div class="breakdown-row vas">
+                                <span>부가서비스 (<span id="method4VasMonths">2</span>개월)</span>
+                                <span id="method4Vas">20,000원</span>
+                            </div>
+                            <div class="breakdown-row penalty">
+                                <span>선택약정 반환금</span>
+                                <span id="method4Penalty">382,500원</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>유심비</span>
+                                <span id="method4Usim">5,000원</span>
+                            </div>
+                        </div>
+                        <button class="detail-btn" onclick="calculator.showDetailModal(4)">📋 상세보기</button>
+                    </div>
+
+                    <!-- 방식 5: 자급제 + 알뜰폰 -->
+                    <div class="method-card" data-method="self-mvno">
+                        <div class="method-header">
+                            <div class="method-rank" id="rank5">5</div>
+                            <div class="method-badge badge-primary" id="badge5">최저가</div>
+                        </div>
+                        <h3 class="method-title">자급제 + 알뜰폰</h3>
+                        <p class="method-desc">자급제 구매 + 처음부터 알뜰폰</p>
+                        
+                        <div class="method-total">
+                            <span class="total-label">총 비용</span>
+                            <span class="total-value" id="method5Total">1,710,000원</span>
+                        </div>
+                        
+                        <div class="method-monthly">
+                            <span class="monthly-label">월 평균</span>
+                            <span class="monthly-value" id="method5Monthly">71,250원</span>
+                        </div>
+
+                        <div class="method-breakdown">
+                            <div class="breakdown-row">
+                                <span>단말기 (자급제)</span>
+                                <span id="method5Device">1,350,000원</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>알뜰폰 (<span id="method5PlanMonths">24</span>개월)</span>
+                                <span id="method5Plan">360,000원</span>
+                            </div>
+                        </div>
+                        <button class="detail-btn" onclick="calculator.showDetailModal(5)">📋 상세보기</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 절약 금액 요약 -->
+            <section class="savings-section">
+                <div class="savings-grid">
+                    <div class="savings-item best">
+                        <span class="savings-icon">🏆</span>
+                        <div class="savings-content">
+                            <span class="savings-label">최적의 선택</span>
+                            <span class="savings-method" id="bestMethod">자급제 + 알뜰폰</span>
+                        </div>
+                    </div>
+                    <div class="savings-item">
+                        <span class="savings-icon">💰</span>
+                        <div class="savings-content">
+                            <span class="savings-label">공시지원금 대비 절약</span>
+                            <span class="savings-amount" id="savingsVsPublic">1,330,000원</span>
+                        </div>
+                    </div>
+                    <div class="savings-item">
+                        <span class="savings-icon">📊</span>
+                        <div class="savings-content">
+                            <span class="savings-label">절약률</span>
+                            <span class="savings-percent" id="savingsPercent">43.8%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 알뜰런 타이밍 분석 -->
+            <section class="card timing-card">
+                <div class="card-header">
+                    <span class="card-icon">⏱️</span>
+                    <h2>알뜰런 최적 타이밍 분석</h2>
+                </div>
+                <div class="card-body">
+                    <p class="timing-desc">선택약정+알뜰런 방식에서 언제 이동하는 것이 가장 유리한지 분석합니다.</p>
+                    <div class="timing-chart" id="timingChart"></div>
+                    <div class="timing-legend">
+                        <div class="legend-item optimal"><span class="legend-dot"></span>최적</div>
+                        <div class="legend-item good"><span class="legend-dot"></span>추천</div>
+                        <div class="legend-item normal"><span class="legend-dot"></span>일반</div>
+                    </div>
+                    <div class="timing-recommendation">
+                        <span class="rec-icon">💡</span>
+                        <span class="rec-text" id="recommendationText">6개월 유지 후 이동 시 가장 효율적입니다.</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 상세 비용 테이블 -->
+            <section class="card detail-card">
+                <div class="card-header">
+                    <span class="card-icon">📋</span>
+                    <h2>상세 비용 비교표</h2>
+                </div>
+                <div class="card-body">
+                    <div class="detail-table-wrapper">
+                        <table class="detail-table">
+                            <thead>
+                                <tr>
+                                    <th>항목</th>
+                                    <th>공시지원금</th>
+                                    <th>선택약정</th>
+                                    <th>선약+추가지원</th>
+                                    <th class="highlight">선택약정+알뜰런</th>
+                                    <th>자급제+알뜰폰</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>단말기 비용</td>
+                                    <td id="table1Device">1,000,000원</td>
+                                    <td id="table2Device">1,500,000원</td>
+                                    <td id="table3Device">1,300,000원</td>
+                                    <td class="highlight" id="table4Device">1,500,000원</td>
+                                    <td id="table5Device">1,350,000원</td>
+                                </tr>
+                                <tr>
+                                    <td>요금제 비용</td>
+                                    <td id="table1Plan">2,040,000원</td>
+                                    <td id="table2Plan">1,530,000원</td>
+                                    <td id="table3Plan">1,530,000원</td>
+                                    <td class="highlight" id="table4Plan">652,500원</td>
+                                    <td id="table5Plan">360,000원</td>
+                                </tr>
+                                <tr>
+                                    <td>위약금/기타</td>
+                                    <td id="table1Penalty">0원</td>
+                                    <td id="table2Penalty">0원</td>
+                                    <td id="table3Penalty">0원</td>
+                                    <td class="highlight" id="table4Penalty">387,500원</td>
+                                    <td id="table5Penalty">0원</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td>총 비용</td>
+                                    <td id="table1Total">3,040,000원</td>
+                                    <td id="table2Total">3,030,000원</td>
+                                    <td id="table3Total">2,830,000원</td>
+                                    <td class="highlight" id="table4Total">2,540,000원</td>
+                                    <td id="table5Total">1,710,000원</td>
+                                </tr>
+                                <tr class="monthly-row">
+                                    <td>월 평균</td>
+                                    <td id="table1Monthly">126,667원</td>
+                                    <td id="table2Monthly">126,250원</td>
+                                    <td id="table3Monthly">117,917원</td>
+                                    <td class="highlight" id="table4Monthly">105,833원</td>
+                                    <td id="table5Monthly">71,250원</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>※ 본 계산기는 참고용이며, 실제 요금은 통신사 정책에 따라 달라질 수 있습니다.</p>
+            <p>※ 공시지원금 반환 조건, 선택약정 조건 등은 가입 전 반드시 확인하세요.</p>
+            <p>※ 선택약정 반환금 = 월 할인금액 × 남은 개월 수</p>
+        </footer>
+    </div>
+
+    <!-- 상세보기 모달 -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">공시지원금 상세 내역</h3>
+                <button class="modal-close" onclick="calculator.closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 동적으로 채워짐 -->
+            </div>
+            <div class="modal-footer">
+                <div class="modal-total">
+                    <span>총 비용</span>
+                    <span class="modal-total-value" id="modalTotal">0원</span>
+                </div>
+                <div class="modal-monthly">
+                    <span>월 평균</span>
+                    <span class="modal-monthly-value" id="modalMonthly">0원</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
