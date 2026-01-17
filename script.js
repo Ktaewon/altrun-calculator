@@ -996,6 +996,9 @@ let calculator;
 document.addEventListener('DOMContentLoaded', () => {
     calculator = new Calculator();
     
+    // 광고 슬롯이 비어있을 때 공백 제거
+    setupAdSlotCleanup();
+
     // ESC 키로 모달 닫기
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
@@ -1010,3 +1013,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+function setupAdSlotCleanup() {
+    const adSlots = document.querySelectorAll('.adsbygoogle');
+    if (!adSlots.length) {
+        return;
+    }
+
+    const hideIfUnfilled = (slot) => {
+        const status = slot.getAttribute('data-ad-status');
+        const rect = slot.getBoundingClientRect();
+        const isUnfilled = status === 'unfilled' || rect.height < 30;
+        if (isUnfilled) {
+            const wrapper = slot.closest('.ad-section');
+            if (wrapper) {
+                wrapper.style.display = 'none';
+            }
+        }
+    };
+
+    adSlots.forEach((slot) => {
+        // 상태 변화 감지
+        const observer = new MutationObserver(() => hideIfUnfilled(slot));
+        observer.observe(slot, { attributes: true, attributeFilter: ['data-ad-status'] });
+
+        // 초기/지연 체크
+        hideIfUnfilled(slot);
+        setTimeout(() => hideIfUnfilled(slot), 2000);
+        setTimeout(() => hideIfUnfilled(slot), 5000);
+    });
+}

@@ -120,6 +120,10 @@ body {
     margin: 1.5rem 0 2rem;
 }
 
+.adsbygoogle[data-ad-status="unfilled"] {
+    display: none !important;
+}
+
 .ad-slot {
     background: rgba(255, 255, 255, 0.04);
     border: 1px dashed rgba(255, 255, 255, 0.2);
