@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://phenomenal-pavlova-eefa13.netlify.app/sitemap.xml

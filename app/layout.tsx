@@ -25,7 +25,7 @@ export default function RootLayout({
     return (
         <html lang="ko">
             <head>
-                <meta name="google-adsense-account" content="ca-pub-9920611646006709" />
+                <meta name="google-adsense-account" content={process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID} />
             </head>
             <body className={notoSansKr.className}>
                 <div className="background-pattern" />
@@ -35,7 +35,7 @@ export default function RootLayout({
                 </main>
                 <Script
                     async
-                    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9920611646006709"
+                    src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID}`}
                     crossOrigin="anonymous"
                     strategy="afterInteractive"
                 />

@@ -65,7 +65,7 @@ export default function PrivacyPage() {
 
                     <h2 className="text-2xl font-bold text-white mt-8 mb-4">5. 문의사항</h2>
                     <p className="mb-2 leading-relaxed">개인정보 관련 문의사항은 하단의 연락처로 문의해주시기 바랍니다.</p>
-                    <p className="mb-4 text-gray-400">이메일: (문의하실 이메일을 입력해주세요)</p>
+                    <p className="mb-4 text-gray-400">이메일: privacy@altrun.com</p>
                 </div>
             </main>
 
