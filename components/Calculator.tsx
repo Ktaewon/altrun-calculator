@@ -29,6 +29,8 @@ interface MethodResult extends CalculationResult {
     badge?: { class: string; text: string };
 }
 
+const methodNames = ['공시지원금', '선택약정', '선택약정+추가지원금', '선택약정+알뜰런', '자급제+알뜰폰'];
+
 export default function Calculator() {
     // --- State ---
 
@@ -285,97 +287,98 @@ export default function Calculator() {
         if (activeModal === null) return null;
         const m = results.methods[activeModal - 1];
 
-        if (activeModal === 1) { // 공시지원금
-            return (
-                <>
-                    <div className="modal-section">
-                        <div className="modal-section-title">📱 단말기 비용</div>
-                        <div className="modal-row"><span className="modal-row-label">출고가</span><span className="modal-row-value">{formatNumber(devicePrice)}원</span></div>
-                        <div className="modal-row discount"><span className="modal-row-label">공시지원금</span><span className="modal-row-value">-{formatNumber(publicSubsidy)}원</span></div>
-                        <div className="modal-row discount"><span className="modal-row-label">추가지원금</span><span className="modal-row-value">-{formatNumber(publicExtraSubsidy)}원</span></div>
-                        <div className="modal-row discount"><span className="modal-row-label">판매점 지원금</span><span className="modal-row-value">-{formatNumber(publicStoreSubsidy)}원</span></div>
-                        <div className="modal-row subtotal"><span className="modal-row-label">단말기 실구매가</span><span className="modal-row-value">{formatNumber(m.device)}원</span></div>
-                    </div>
-                    <div className="modal-section">
-                        <div className="modal-section-title">📶 요금제 비용 ({totalPeriod}개월)</div>
-                        <div className="modal-row">
-                            <span className="modal-row-label">고가 요금제 ({m.highMonths}개월)</span>
-                            <span className="modal-row-value">{formatNumber(m.highPlan!)}원</span>
-                        </div>
-                        {publicHighCombineDiscount > 0 && <div className="modal-row discount"><span className="modal-row-label">└ 결합할인</span><span className="modal-row-value">-{formatNumber(publicHighCombineDiscount)}원/월</span></div>}
-                        <div className="modal-row">
-                            <span className="modal-row-label">저가 요금제 ({m.lowMonths}개월)</span>
-                            <span className="modal-row-value">{formatNumber(m.lowPlan!)}원</span>
-                        </div>
-                        {publicLowCombineDiscount > 0 && <div className="modal-row discount"><span className="modal-row-label">└ 결합할인</span><span className="modal-row-value">-{formatNumber(publicLowCombineDiscount)}원/월</span></div>}
-                        <div className="modal-row subtotal"><span className="modal-row-label">요금제 소계</span><span className="modal-row-value">{formatNumber(m.plan)}원</span></div>
-                    </div>
-                    {m.vasMonths > 0 &&
+        switch (activeModal) {
+            case 1: // 공시지원금
+                return (
+                    <>
                         <div className="modal-section">
-                            <div className="modal-section-title">➕ 부가서비스</div>
-                            <div className="modal-row"><span className="modal-row-label">부가서비스 ({m.vasMonths}개월)</span><span className="modal-row-value">{formatNumber(m.vas)}원</span></div>
-                        </div>}
-                </>
-            );
-        } else if (activeModal === 2 || activeModal === 3) { // 선택약정
-            // reuse m variable but structure needs specific checks if differences exist
-            return (
-                <>
-                    <div className="modal-section">
-                        <div className="modal-section-title">📱 단말기 비용</div>
-                        <div className="modal-row"><span className="modal-row-label">출고가</span><span className="modal-row-value">{formatNumber(devicePrice)}원</span></div>
-                        {activeModal === 3 && <div className="modal-row discount"><span className="modal-row-label">추가지원금 ⚠️</span><span className="modal-row-value">-{formatNumber(selectExtraSubsidy)}원</span></div>}
-                        <div className="modal-row discount"><span className="modal-row-label">판매점 지원금</span><span className="modal-row-value">-{formatNumber(selectStoreSubsidy)}원</span></div>
-                        <div className="modal-row subtotal"><span className="modal-row-label">단말기 실구매가</span><span className="modal-row-value">{formatNumber(m.device)}원</span></div>
-                    </div>
-                    <div className="modal-section">
-                        <div className="modal-section-title">📶 요금제 비용 (선택약정 {selectDiscountRate}% 할인)</div>
-                        <div className="modal-row"><span className="modal-row-label">고가 요금제 ({m.highMonths}개월)</span><span className="modal-row-value">{formatNumber(m.highPlan!)}원</span></div>
-                        {selectHighCombineDiscount > 0 && <div className="modal-row discount"><span className="modal-row-label">└ 결합할인</span><span className="modal-row-value">-{formatNumber(selectHighCombineDiscount)}원/월</span></div>}
-                        <div className="modal-row"><span className="modal-row-label">저가 요금제 ({m.lowMonths}개월)</span><span className="modal-row-value">{formatNumber(m.lowPlan!)}원</span></div>
-                        {selectLowCombineDiscount > 0 && <div className="modal-row discount"><span className="modal-row-label">└ 결합할인</span><span className="modal-row-value">-{formatNumber(selectLowCombineDiscount)}원/월</span></div>}
-                        <div className="modal-row subtotal"><span className="modal-row-label">요금제 소계</span><span className="modal-row-value">{formatNumber(m.plan)}원</span></div>
-                    </div>
-                    {m.vasMonths > 0 && <div className="modal-section"><div className="modal-section-title">➕ 부가서비스</div><div className="modal-row"><span className="modal-row-label">부가서비스 ({m.vasMonths}개월)</span><span className="modal-row-value">{formatNumber(m.vas)}원</span></div></div>}
-                </>
-            );
-        } else if (activeModal === 4) { // 알뜰런
-            return (
-                <>
-                    <div className="modal-section">
-                        <div className="modal-section-title">📱 단말기 비용</div>
-                        <div className="modal-row"><span className="modal-row-label">출고가</span><span className="modal-row-value">{formatNumber(devicePrice)}원</span></div>
-                        <div className="modal-row discount"><span className="modal-row-label">판매점 지원금</span><span className="modal-row-value">-{formatNumber(selectStoreSubsidy)}원</span></div>
-                        <div className="modal-row subtotal"><span className="modal-row-label">단말기 실구매가</span><span className="modal-row-value">{formatNumber(m.device)}원</span></div>
-                    </div>
-                    <div className="modal-section">
-                        <div className="modal-section-title">📶 요금제 비용</div>
-                        <div className="modal-row"><span className="modal-row-label">고가 요금제 ({m.highMonths}개월)</span><span className="modal-row-value">{formatNumber(m.highPlan!)}원</span></div>
-                        <div className="modal-row"><span className="modal-row-label">저가 요금제 ({m.lowMonths}개월)</span><span className="modal-row-value">{formatNumber(m.lowPlan!)}원</span></div>
-                        <div className="modal-row"><span className="modal-row-label">알뜰폰 ({m.mvnoMonths}개월)</span><span className="modal-row-value">{formatNumber(m.mvno!)}원</span></div>
-                        <div className="modal-row penalty"><span className="modal-row-label">선택약정 반환금</span><span className="modal-row-value">{formatNumber(m.penalty)}원</span></div>
-                        <div className="modal-row"><span className="modal-row-label">유심비</span><span className="modal-row-value">{formatNumber(m.usim)}원</span></div>
-                        <div className="modal-row subtotal"><span className="modal-row-label">합계</span><span className="modal-row-value">{formatNumber(m.plan + m.penalty + m.usim)}원</span></div>
-                    </div>
-                </>
-            );
-        } else { // 자급제
-            return (
-                <>
-                    <div className="modal-section">
-                        <div className="modal-section-title">📱 단말기 비용</div>
-                        <div className="modal-row"><span className="modal-row-label">자급제 구매가</span><span className="modal-row-value">{formatNumber(selfPurchasePrice)}원</span></div>
-                    </div>
-                    <div className="modal-section">
-                        <div className="modal-section-title">📶 요금제 비용</div>
-                        <div className="modal-row"><span className="modal-row-label">알뜰폰 ({totalPeriod}개월)</span><span className="modal-row-value">{formatNumber(m.plan)}원</span></div>
-                    </div>
-                </>
-            )
+                            <div className="modal-section-title">📱 단말기 비용</div>
+                            <div className="modal-row"><span className="modal-row-label">출고가</span><span className="modal-row-value">{formatNumber(devicePrice)}원</span></div>
+                            <div className="modal-row discount"><span className="modal-row-label">공시지원금</span><span className="modal-row-value">-{formatNumber(publicSubsidy)}원</span></div>
+                            <div className="modal-row discount"><span className="modal-row-label">추가지원금</span><span className="modal-row-value">-{formatNumber(publicExtraSubsidy)}원</span></div>
+                            <div className="modal-row discount"><span className="modal-row-label">판매점 지원금</span><span className="modal-row-value">-{formatNumber(publicStoreSubsidy)}원</span></div>
+                            <div className="modal-row subtotal"><span className="modal-row-label">단말기 실구매가</span><span className="modal-row-value">{formatNumber(m.device)}원</span></div>
+                        </div>
+                        <div className="modal-section">
+                            <div className="modal-section-title">📶 요금제 비용 ({totalPeriod}개월)</div>
+                            <div className="modal-row">
+                                <span className="modal-row-label">고가 요금제 ({m.highMonths}개월)</span>
+                                <span className="modal-row-value">{formatNumber(m.highPlan!)}원</span>
+                            </div>
+                            {publicHighCombineDiscount > 0 && <div className="modal-row discount"><span className="modal-row-label">└ 결합할인</span><span className="modal-row-value">-{formatNumber(publicHighCombineDiscount)}원/월</span></div>}
+                            <div className="modal-row">
+                                <span className="modal-row-label">저가 요금제 ({m.lowMonths}개월)</span>
+                                <span className="modal-row-value">{formatNumber(m.lowPlan!)}원</span>
+                            </div>
+                            {publicLowCombineDiscount > 0 && <div className="modal-row discount"><span className="modal-row-label">└ 결합할인</span><span className="modal-row-value">-{formatNumber(publicLowCombineDiscount)}원/월</span></div>}
+                            <div className="modal-row subtotal"><span className="modal-row-label">요금제 소계</span><span className="modal-row-value">{formatNumber(m.plan)}원</span></div>
+                        </div>
+                        {m.vasMonths > 0 &&
+                            <div className="modal-section">
+                                <div className="modal-section-title">➕ 부가서비스</div>
+                                <div className="modal-row"><span className="modal-row-label">부가서비스 ({m.vasMonths}개월)</span><span className="modal-row-value">{formatNumber(m.vas)}원</span></div>
+                            </div>}
+                    </>
+                );
+            case 2:
+            case 3: // 선택약정
+                return (
+                    <>
+                        <div className="modal-section">
+                            <div className="modal-section-title">📱 단말기 비용</div>
+                            <div className="modal-row"><span className="modal-row-label">출고가</span><span className="modal-row-value">{formatNumber(devicePrice)}원</span></div>
+                            {activeModal === 3 && <div className="modal-row discount"><span className="modal-row-label">추가지원금 ⚠️</span><span className="modal-row-value">-{formatNumber(selectExtraSubsidy)}원</span></div>}
+                            <div className="modal-row discount"><span className="modal-row-label">판매점 지원금</span><span className="modal-row-value">-{formatNumber(selectStoreSubsidy)}원</span></div>
+                            <div className="modal-row subtotal"><span className="modal-row-label">단말기 실구매가</span><span className="modal-row-value">{formatNumber(m.device)}원</span></div>
+                        </div>
+                        <div className="modal-section">
+                            <div className="modal-section-title">📶 요금제 비용 (선택약정 {selectDiscountRate}% 할인)</div>
+                            <div className="modal-row"><span className="modal-row-label">고가 요금제 ({m.highMonths}개월)</span><span className="modal-row-value">{formatNumber(m.highPlan!)}원</span></div>
+                            {selectHighCombineDiscount > 0 && <div className="modal-row discount"><span className="modal-row-label">└ 결합할인</span><span className="modal-row-value">-{formatNumber(selectHighCombineDiscount)}원/월</span></div>}
+                            <div className="modal-row"><span className="modal-row-label">저가 요금제 ({m.lowMonths}개월)</span><span className="modal-row-value">{formatNumber(m.lowPlan!)}원</span></div>
+                            {selectLowCombineDiscount > 0 && <div className="modal-row discount"><span className="modal-row-label">└ 결합할인</span><span className="modal-row-value">-{formatNumber(selectLowCombineDiscount)}원/월</span></div>}
+                            <div className="modal-row subtotal"><span className="modal-row-label">요금제 소계</span><span className="modal-row-value">{formatNumber(m.plan)}원</span></div>
+                        </div>
+                        {m.vasMonths > 0 && <div className="modal-section"><div className="modal-section-title">➕ 부가서비스</div><div className="modal-row"><span className="modal-row-label">부가서비스 ({m.vasMonths}개월)</span><span className="modal-row-value">{formatNumber(m.vas)}원</span></div></div>}
+                    </>
+                );
+            case 4: // 알뜰런
+                return (
+                    <>
+                        <div className="modal-section">
+                            <div className="modal-section-title">📱 단말기 비용</div>
+                            <div className="modal-row"><span className="modal-row-label">출고가</span><span className="modal-row-value">{formatNumber(devicePrice)}원</span></div>
+                            <div className="modal-row discount"><span className="modal-row-label">판매점 지원금</span><span className="modal-row-value">-{formatNumber(selectStoreSubsidy)}원</span></div>
+                            <div className="modal-row subtotal"><span className="modal-row-label">단말기 실구매가</span><span className="modal-row-value">{formatNumber(m.device)}원</span></div>
+                        </div>
+                        <div className="modal-section">
+                            <div className="modal-section-title">📶 요금제 비용</div>
+                            <div className="modal-row"><span className="modal-row-label">고가 요금제 ({m.highMonths}개월)</span><span className="modal-row-value">{formatNumber(m.highPlan!)}원</span></div>
+                            <div className="modal-row"><span className="modal-row-label">저가 요금제 ({m.lowMonths}개월)</span><span className="modal-row-value">{formatNumber(m.lowPlan!)}원</span></div>
+                            <div className="modal-row"><span className="modal-row-label">알뜰폰 ({m.mvnoMonths}개월)</span><span className="modal-row-value">{formatNumber(m.mvno!)}원</span></div>
+                            <div className="modal-row penalty"><span className="modal-row-label">선택약정 반환금</span><span className="modal-row-value">{formatNumber(m.penalty)}원</span></div>
+                            <div className="modal-row"><span className="modal-row-label">유심비</span><span className="modal-row-value">{formatNumber(m.usim)}원</span></div>
+                            <div className="modal-row subtotal"><span className="modal-row-label">합계</span><span className="modal-row-value">{formatNumber(m.plan + m.penalty + m.usim)}원</span></div>
+                        </div>
+                    </>
+                );
+            default: // 자급제 (5)
+                return (
+                    <>
+                        <div className="modal-section">
+                            <div className="modal-section-title">📱 단말기 비용</div>
+                            <div className="modal-row"><span className="modal-row-label">자급제 구매가</span><span className="modal-row-value">{formatNumber(selfPurchasePrice)}원</span></div>
+                        </div>
+                        <div className="modal-section">
+                            <div className="modal-section-title">📶 요금제 비용</div>
+                            <div className="modal-row"><span className="modal-row-label">알뜰폰 ({totalPeriod}개월)</span><span className="modal-row-value">{formatNumber(m.plan)}원</span></div>
+                        </div>
+                    </>
+                );
         }
     };
 
-    const methodNames = ['공시지원금', '선택약정', '선택약정+추가지원금', '선택약정+알뜰런', '자급제+알뜰폰'];
+
 
     return (
         <div id="calculator">
