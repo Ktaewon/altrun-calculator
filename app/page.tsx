@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function Home() {
     return (
         <div className="container pb-12">
-            <header className="header text-center py-12">
+            <header className="header text-center py-6">
                 <div className="logo flex-center mb-4">
                     <span className="logo-icon">📱</span>
                     <h1>알뜰런 계산기</h1>

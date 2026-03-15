@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 
 // Types
 interface CalculationResult {
@@ -70,6 +70,40 @@ export default function Calculator() {
 
     // Modal State
     const [activeModal, setActiveModal] = useState<number | null>(null);
+
+    // Phase 1: Accordion state
+    const [openSections, setOpenSections] = useState<Set<number>>(new Set([0, 1]));
+    const toggleSection = (idx: number) => {
+        setOpenSections(prev => {
+            const next = new Set(prev);
+            if (next.has(idx)) next.delete(idx);
+            else next.add(idx);
+            return next;
+        });
+    };
+
+    // Phase 5: Sticky summary bar state
+    const [showStickyBar, setShowStickyBar] = useState(false);
+    const comparisonRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const el = comparisonRef.current;
+        if (!el) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => setShowStickyBar(!entry.isIntersecting),
+            { threshold: 0.1 }
+        );
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
+
+    const scrollToResults = useCallback(() => {
+        comparisonRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, []);
+
+    // Phase 9: Result flash animation
+    const prevTotalsRef = useRef<number[]>([]);
+    const [flashCards, setFlashCards] = useState<Set<number>>(new Set());
 
     // --- Helpers ---
     const formatNumber = (num: number) => Math.round(num).toLocaleString('ko-KR');
@@ -282,6 +316,23 @@ export default function Calculator() {
         mvnoMoveMonths
     ]);
 
+    // Phase 9: Flash effect on results change
+    useEffect(() => {
+        const currentTotals = results.methods.map(m => m.total);
+        const prev = prevTotalsRef.current;
+        if (prev.length > 0) {
+            const changed = new Set<number>();
+            currentTotals.forEach((t, i) => {
+                if (prev[i] !== undefined && prev[i] !== t) changed.add(i);
+            });
+            if (changed.size > 0) {
+                setFlashCards(changed);
+                setTimeout(() => setFlashCards(new Set()), 600);
+            }
+        }
+        prevTotalsRef.current = currentTotals;
+    }, [results]);
+
     // --- Modal Logic ---
     const renderModalContent = () => {
         if (activeModal === null) return null;
@@ -384,84 +435,104 @@ export default function Calculator() {
         <div id="calculator">
             {/* 입력 섹션 */}
             <div className="input-section">
-                {/* 단말기 정보 */}
+                {/* 단말기 정보 - idx 0 */}
                 <section className="card input-card">
-                    <div className="card-header"><span className="card-icon">📲</span><h2>단말기 정보</h2></div>
-                    <div className="card-body">
-                        <div className="input-row">
-                            <InputField label="단말기 출고가" id="devicePrice" value={devicePrice} onChange={setDevicePrice} unit="원" />
-                            <InputField label="자급제 구매가" id="selfPurchasePrice" value={selfPurchasePrice} onChange={setSelfPurchasePrice} unit="원" hint="쿠팡/11번가 등 자급제 가격" />
+                    <div className="card-header" onClick={() => toggleSection(0)}>
+                        <span className="card-icon">📲</span><h2>단말기 정보</h2>
+                        <span className={`chevron ${openSections.has(0) ? 'open' : ''}`}>▼</span>
+                    </div>
+                    <div className={`card-body-wrapper ${openSections.has(0) ? 'open' : ''}`}>
+                        <div className="card-body">
+                            <div className="input-row">
+                                <InputField label="단말기 출고가" id="devicePrice" value={devicePrice} onChange={setDevicePrice} unit="원" />
+                                <InputField label="자급제 구매가" id="selfPurchasePrice" value={selfPurchasePrice} onChange={setSelfPurchasePrice} unit="원" hint="쿠팡/11번가 등 자급제 가격" />
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* 공통 설정 */}
+                {/* 공통 설정 - idx 1 */}
                 <section className="card input-card">
-                    <div className="card-header"><span className="card-icon">⚙️</span><h2>공통 설정</h2></div>
-                    <div className="card-body">
-                        <div className="input-row">
-                            <InputField label="총 사용 기간" id="totalPeriod" value={totalPeriod} onChange={setTotalPeriod} unit="개월" min={12} max={48} />
-                            <InputField label="알뜰폰 요금제" id="mvnoPlanCost" value={mvnoPlanCost} onChange={setMvnoPlanCost} unit="원/월" />
-                        </div>
-                        <div className="input-row">
-                            <InputField label="유심/eSIM 비용" id="usimCost" value={usimCost} onChange={setUsimCost} unit="원" />
+                    <div className="card-header" onClick={() => toggleSection(1)}>
+                        <span className="card-icon">⚙️</span><h2>공통 설정</h2>
+                        <span className={`chevron ${openSections.has(1) ? 'open' : ''}`}>▼</span>
+                    </div>
+                    <div className={`card-body-wrapper ${openSections.has(1) ? 'open' : ''}`}>
+                        <div className="card-body">
+                            <div className="input-row">
+                                <InputField label="총 사용 기간" id="totalPeriod" value={totalPeriod} onChange={setTotalPeriod} unit="개월" min={12} max={48} />
+                                <InputField label="알뜰폰 요금제" id="mvnoPlanCost" value={mvnoPlanCost} onChange={setMvnoPlanCost} unit="원/월" />
+                            </div>
+                            <div className="input-row">
+                                <InputField label="유심/eSIM 비용" id="usimCost" value={usimCost} onChange={setUsimCost} unit="원" />
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* 공시지원금 */}
+                {/* 공시지원금 - idx 2 */}
                 <section className="card input-card card-public">
-                    <div className="card-header"><span className="card-icon">💵</span><h2>공시지원금 조건</h2></div>
-                    <div className="card-body">
-                        <div className="input-row">
-                            <InputField label="공시지원금" value={publicSubsidy} onChange={setPublicSubsidy} unit="원" />
-                            <InputField label="추가지원금" value={publicExtraSubsidy} onChange={setPublicExtraSubsidy} unit="원" hint="⚠️ 6개월 이전 해지 시 반환" hintClass="warning" />
-                        </div>
-                        <div className="input-row">
-                            <InputField label="판매점 지원금" value={publicStoreSubsidy} onChange={setPublicStoreSubsidy} unit="원" hint="반환 불필요" />
-                            <InputField label="의무 유지 기간" value={publicMinMonths} onChange={setPublicMinMonths} unit="개월" min={1} max={24} hint="보통 6개월" />
-                        </div>
-                        <div className="input-row">
-                            <InputField label="공시 요금제 (고가)" value={publicPlanCost} onChange={setPublicPlanCost} unit="원/월" hint="의무 유지 기간 동안" />
-                            <InputField label="이후 요금제 (저가)" value={publicLowPlanCost} onChange={setPublicLowPlanCost} unit="원/월" hint="의무 유지 후 하향 가능" />
-                        </div>
-                        <div className="input-row">
-                            <InputField label="부가서비스 금액" value={publicVasCost} onChange={setPublicVasCost} unit="원/월" hint="의무 가입 부가서비스" />
-                            <InputField label="부가서비스 유지 기간" value={publicVasMonths} onChange={setPublicVasMonths} unit="개월" min={0} max={24} />
-                        </div>
-                        <div className="input-row">
-                            <InputField label="결합할인 (고가)" value={publicHighCombineDiscount} onChange={setPublicHighCombineDiscount} unit="원/월" hint="고가 요금제 결합할인" />
-                            <InputField label="결합할인 (저가)" value={publicLowCombineDiscount} onChange={setPublicLowCombineDiscount} unit="원/월" hint="저가 요금제 결합할인" />
+                    <div className="card-header" onClick={() => toggleSection(2)}>
+                        <span className="card-icon">💵</span><h2>공시지원금 조건</h2>
+                        <span className={`chevron ${openSections.has(2) ? 'open' : ''}`}>▼</span>
+                    </div>
+                    <div className={`card-body-wrapper ${openSections.has(2) ? 'open' : ''}`}>
+                        <div className="card-body">
+                            <div className="input-row">
+                                <InputField label="공시지원금" value={publicSubsidy} onChange={setPublicSubsidy} unit="원" />
+                                <InputField label="추가지원금" value={publicExtraSubsidy} onChange={setPublicExtraSubsidy} unit="원" hint="⚠️ 6개월 이전 해지 시 반환" hintClass="warning" />
+                            </div>
+                            <div className="input-row">
+                                <InputField label="판매점 지원금" value={publicStoreSubsidy} onChange={setPublicStoreSubsidy} unit="원" hint="반환 불필요" />
+                                <InputField label="의무 유지 기간" value={publicMinMonths} onChange={setPublicMinMonths} unit="개월" min={1} max={24} hint="보통 6개월" />
+                            </div>
+                            <div className="input-row">
+                                <InputField label="공시 요금제 (고가)" value={publicPlanCost} onChange={setPublicPlanCost} unit="원/월" hint="의무 유지 기간 동안" />
+                                <InputField label="이후 요금제 (저가)" value={publicLowPlanCost} onChange={setPublicLowPlanCost} unit="원/월" hint="의무 유지 후 하향 가능" />
+                            </div>
+                            <div className="input-row">
+                                <InputField label="부가서비스 금액" value={publicVasCost} onChange={setPublicVasCost} unit="원/월" hint="의무 가입 부가서비스" />
+                                <InputField label="부가서비스 유지 기간" value={publicVasMonths} onChange={setPublicVasMonths} unit="개월" min={0} max={24} />
+                            </div>
+                            <div className="input-row">
+                                <InputField label="결합할인 (고가)" value={publicHighCombineDiscount} onChange={setPublicHighCombineDiscount} unit="원/월" hint="고가 요금제 결합할인" />
+                                <InputField label="결합할인 (저가)" value={publicLowCombineDiscount} onChange={setPublicLowCombineDiscount} unit="원/월" hint="저가 요금제 결합할인" />
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* 선택약정 */}
+                {/* 선택약정 - idx 3 */}
                 <section className="card input-card card-select">
-                    <div className="card-header"><span className="card-icon">📝</span><h2>선택약정 조건</h2></div>
-                    <div className="card-body">
-                        <div className="input-row">
-                            <InputField label="추가지원금" value={selectExtraSubsidy} onChange={setSelectExtraSubsidy} unit="원" hint="⚠️ 6개월 이전 해지 시 반환" hintClass="warning" />
-                            <InputField label="판매점 지원금" value={selectStoreSubsidy} onChange={setSelectStoreSubsidy} unit="원" hint="반환 불필요" />
-                        </div>
-                        <div className="input-row">
-                            <InputField label="선택약정 할인율" value={selectDiscountRate} onChange={setSelectDiscountRate} unit="%" />
-                            <InputField label="의무 유지 기간" value={selectMinMonths} onChange={setSelectMinMonths} unit="개월" min={1} max={24} hint="요금제 유지 필수 기간" />
-                        </div>
-                        <div className="input-row">
-                            <InputField label="선택약정 요금제 (고가)" value={selectPlanCost} onChange={setSelectPlanCost} unit="원/월" hint="의무 유지 기간 동안 요금제" />
-                            <InputField label="이후 요금제 (저가)" value={selectLowPlanCost} onChange={setSelectLowPlanCost} unit="원/월" hint="의무 유지 후 변경 가능한 요금제" />
-                        </div>
-                        <div className="input-row">
-                            <InputField label="부가서비스 금액" value={selectVasCost} onChange={setSelectVasCost} unit="원/월" hint="의무 가입 부가서비스" />
-                            <InputField label="부가서비스 유지 기간" value={selectVasMonths} onChange={setSelectVasMonths} unit="개월" min={0} max={24} />
-                        </div>
-                        <div className="input-row">
-                            <InputField label="결합할인 (고가)" value={selectHighCombineDiscount} onChange={setSelectHighCombineDiscount} unit="원/월" hint="고가 요금제 결합할인" />
-                            <InputField label="결합할인 (저가)" value={selectLowCombineDiscount} onChange={setSelectLowCombineDiscount} unit="원/월" hint="저가 요금제 결합할인" />
-                        </div>
-                        <div className="input-row">
-                            <InputField label="알뜰런 이동 시점" value={mvnoMoveMonths} onChange={setMvnoMoveMonths} unit="개월 후" min={1} max={24} hint="이 기간 후 알뜰폰 이동" />
+                    <div className="card-header" onClick={() => toggleSection(3)}>
+                        <span className="card-icon">📝</span><h2>선택약정 조건</h2>
+                        <span className={`chevron ${openSections.has(3) ? 'open' : ''}`}>▼</span>
+                    </div>
+                    <div className={`card-body-wrapper ${openSections.has(3) ? 'open' : ''}`}>
+                        <div className="card-body">
+                            <div className="input-row">
+                                <InputField label="추가지원금" value={selectExtraSubsidy} onChange={setSelectExtraSubsidy} unit="원" hint="⚠️ 6개월 이전 해지 시 반환" hintClass="warning" />
+                                <InputField label="판매점 지원금" value={selectStoreSubsidy} onChange={setSelectStoreSubsidy} unit="원" hint="반환 불필요" />
+                            </div>
+                            <div className="input-row">
+                                <InputField label="선택약정 할인율" value={selectDiscountRate} onChange={setSelectDiscountRate} unit="%" />
+                                <InputField label="의무 유지 기간" value={selectMinMonths} onChange={setSelectMinMonths} unit="개월" min={1} max={24} hint="요금제 유지 필수 기간" />
+                            </div>
+                            <div className="input-row">
+                                <InputField label="선택약정 요금제 (고가)" value={selectPlanCost} onChange={setSelectPlanCost} unit="원/월" hint="의무 유지 기간 동안 요금제" />
+                                <InputField label="이후 요금제 (저가)" value={selectLowPlanCost} onChange={setSelectLowPlanCost} unit="원/월" hint="의무 유지 후 변경 가능한 요금제" />
+                            </div>
+                            <div className="input-row">
+                                <InputField label="부가서비스 금액" value={selectVasCost} onChange={setSelectVasCost} unit="원/월" hint="의무 가입 부가서비스" />
+                                <InputField label="부가서비스 유지 기간" value={selectVasMonths} onChange={setSelectVasMonths} unit="개월" min={0} max={24} />
+                            </div>
+                            <div className="input-row">
+                                <InputField label="결합할인 (고가)" value={selectHighCombineDiscount} onChange={setSelectHighCombineDiscount} unit="원/월" hint="고가 요금제 결합할인" />
+                                <InputField label="결합할인 (저가)" value={selectLowCombineDiscount} onChange={setSelectLowCombineDiscount} unit="원/월" hint="저가 요금제 결합할인" />
+                            </div>
+                            <div className="input-row">
+                                <InputField label="알뜰런 이동 시점" value={mvnoMoveMonths} onChange={setMvnoMoveMonths} unit="개월 후" min={1} max={24} hint="이 기간 후 알뜰폰 이동" />
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -470,12 +541,18 @@ export default function Calculator() {
             {/* Ad Placeholder */}
             {/* <div className="ad-section">...</div> */}
 
+            {/* Phase 8: Disclaimer banner */}
+            <div className="disclaimer-banner">
+                <span className="disclaimer-icon">⚠️</span>
+                <span>본 계산기의 결과는 참고용이며, 실제 비용은 통신사 정책 및 프로모션에 따라 달라질 수 있습니다.</span>
+            </div>
+
             {/* 5가지 방식 비교 */}
-            <section className="comparison-section">
+            <section className="comparison-section" ref={comparisonRef}>
                 <h2 className="section-title"><span className="title-icon">⚖️</span>5가지 방식 비교</h2>
                 <div className="comparison-cards">
                     {results.methods.map((m, i) => (
-                        <div key={i} className={`method-card ${m.rank === 1 ? 'best' : ''} ${m.rank === 2 ? 'featured' : ''}`}>
+                        <div key={i} className={`method-card ${m.rank === 1 ? 'best' : ''} ${m.rank === 2 ? 'featured' : ''} ${flashCards.has(i) ? 'result-updated' : ''}`}>
                             <div className="method-header">
                                 <div className="method-rank">{m.rank}</div>
                                 <div className={`method-badge ${m.badge?.class}`}>{m.badge?.text}</div>
@@ -571,6 +648,23 @@ export default function Calculator() {
                     </div>
                 )}
             </div>
+
+            {/* Phase 5: Sticky summary bar */}
+            {showStickyBar && (
+                <div className="sticky-summary">
+                    <div className="sticky-summary-content">
+                        <div className="sticky-best">
+                            <span className="sticky-label">최적</span>
+                            <span className="sticky-method">{methodNames[results.bestIndex]}</span>
+                        </div>
+                        <div className="sticky-cost">
+                            <span className="sticky-total">{formatNumber(results.methods[results.bestIndex].total)}원</span>
+                            <span className="sticky-monthly">월 {formatNumber(results.methods[results.bestIndex].monthly)}원</span>
+                        </div>
+                        <button className="sticky-btn" onClick={scrollToResults}>결과 보기</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
@@ -589,17 +683,46 @@ interface InputFieldProps {
 }
 
 function InputField({ label, value, onChange, unit, id, min, max, hint, hintClass }: InputFieldProps) {
+    const [isFocused, setIsFocused] = useState(false);
+    const [displayValue, setDisplayValue] = useState(value.toLocaleString('ko-KR'));
+
+    useEffect(() => {
+        if (!isFocused) {
+            setDisplayValue(value.toLocaleString('ko-KR'));
+        }
+    }, [value, isFocused]);
+
+    const handleFocus = () => {
+        setIsFocused(true);
+        setDisplayValue(String(value));
+    };
+
+    const handleBlur = () => {
+        setIsFocused(false);
+        setDisplayValue(value.toLocaleString('ko-KR'));
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const raw = e.target.value.replace(/[^0-9.-]/g, '');
+        setDisplayValue(raw);
+        const num = Number(raw);
+        if (!isNaN(num)) {
+            onChange(min !== undefined ? Math.max(min, max !== undefined ? Math.min(max, num) : num) : max !== undefined ? Math.min(max, num) : num);
+        }
+    };
+
     return (
         <div className="input-group">
             <label htmlFor={id}>{label}</label>
             <div className="input-wrapper">
                 <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     id={id}
-                    value={value}
-                    onChange={(e) => onChange(Number(e.target.value))}
-                    min={min}
-                    max={max}
+                    value={displayValue}
+                    onChange={handleChange}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
                 />
                 <span className="unit">{unit}</span>
             </div>
