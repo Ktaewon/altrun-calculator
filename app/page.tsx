@@ -14,6 +14,10 @@ export default function Home() {
                 <p className="subtitle">
                     5가지 구매 방식을 한눈에 비교해보세요
                 </p>
+                <p className="intro-desc">
+                    <strong>알뜰런</strong>이란 통신사 선택약정으로 단말기를 할인 구매한 뒤, 일정 기간 후 알뜰폰(MVNO)으로 이동하여 총 비용을 절약하는 방법입니다.
+                    {' '}<Link href="/guide" className="intro-link">사용가이드 보기 &rarr;</Link>
+                </p>
             </header>
 
             {/* Ad Section */}

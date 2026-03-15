@@ -110,6 +110,25 @@ body {
     font-weight: 300;
 }
 
+.intro-desc {
+    max-width: 640px;
+    margin: 0.75rem auto 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.intro-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.intro-link:hover {
+    color: var(--primary-light);
+}
+
 /* Input Section */
 .input-section {
     display: flex;
