@@ -1208,13 +1208,24 @@ input[type="number"] {
         font-size: 1.8rem;
     }
 
+    .tooltip-wrap {
+        position: static;
+    }
+
+    .input-group {
+        position: relative;
+    }
+
     .tooltip-text {
-        max-width: 200px;
+        left: 0;
+        right: 0;
+        min-width: 0;
+        max-width: none;
+        width: auto;
     }
 
     .tooltip-text::after {
         left: 12px;
-        transform: none;
     }
 }
 
