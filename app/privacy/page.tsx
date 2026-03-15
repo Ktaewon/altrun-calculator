@@ -13,7 +13,7 @@ export default function PrivacyPage() {
             <main className="main-content mx-auto max-w-4xl">
                 <div className="bg-privacy-card shadow-lg text-gray-300">
                     <h1 className="text-3xl font-bold text-white mb-6">개인정보처리방침</h1>
-                    <p className="mb-6">최종 수정일: 2026년 2월 8일</p>
+                    <p className="mb-6">최종 수정일: 2026년 3월 16일</p>
 
                     <p className="mb-6 leading-relaxed">
                         &apos;알뜰런 유지비 계산기&apos;(이하 &apos;사이트&apos;)는 이용자의 개인정보를 중요시하며, &quot;정보통신망 이용촉진 및 정보보호&quot;에 관한 법률을 준수하고 있습니다.
@@ -37,7 +37,7 @@ export default function PrivacyPage() {
                     <ul className="list-disc pl-6 mb-4">
                         <li>서비스 제공 및 기능 개선</li>
                         <li>접속 빈도 파악 및 서비스 이용 통계</li>
-                        <li>광고 게재 (Google AdSense)</li>
+                        <li>광고 게재 (카카오 애드핏)</li>
                     </ul>
 
                     <h2 className="text-2xl font-bold text-white mt-8 mb-4">3. 쿠키(Cookie)의 운용 및 거부</h2>
@@ -45,16 +45,19 @@ export default function PrivacyPage() {
                         본 사이트는 이용자에게 맞춤형 서비스를 제공하기 위해 이용정보를 저장하고 수시로 불러오는 &apos;쿠키(Cookie)&apos;를 사용합니다.
                     </p>
 
-                    <h3 className="text-xl font-semibold text-white mt-8 mb-4">Google AdSense 광고</h3>
+                    <h3 className="text-xl font-semibold text-white mt-8 mb-4">카카오 애드핏 광고</h3>
                     <p className="mb-4 leading-relaxed">
-                        본 사이트는 Google AdSense를 통해 광고를 게재합니다. Google은 쿠키를 사용하여 사용자가 본 사이트나 다른 웹사이트를 방문한 기록을 바탕으로 적절한 광고를 제공할 수 있습니다.
+                        본 사이트는 카카오 애드핏(Kakao AdFit)을 통해 광고를 게재합니다. 카카오는 쿠키를 사용하여 이용자의 관심사에 기반한 광고를 제공할 수 있습니다.
                     </p>
                     <ul className="list-disc pl-6 mb-4">
                         <li>
-                            사용자는 광고 설정을 통해 개인 맞춤 광고를 해제할 수 있습니다. (<a href="https://www.google.com/settings/ads" target="_blank" className="text-blue-400 hover:underline">Google 광고 설정</a>)
+                            카카오 애드핏은 광고 제공을 위해 쿠키 및 기기 식별 정보를 수집할 수 있습니다.
                         </li>
                         <li>
-                            제3자 공급업체나 광고 네트워크의 쿠키 사용을 방지하려면 <a href="http://www.aboutads.info" target="_blank" className="text-blue-400 hover:underline">www.aboutads.info</a>를 방문하여 거부할 수 있습니다.
+                            사용자는 브라우저 설정에서 쿠키를 차단하거나 삭제하여 광고 추적을 거부할 수 있습니다.
+                        </li>
+                        <li>
+                            카카오의 개인정보처리방침은 <a href="https://www.kakao.com/policy/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">카카오 개인정보처리방침</a>에서 확인할 수 있습니다.
                         </li>
                     </ul>
 
