@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import Script from "next/script";
 
 const notoSansKr = Noto_Sans_KR({ subsets: ["latin"] });
 
@@ -24,21 +23,12 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="ko">
-            <head>
-                <meta name="google-adsense-account" content={process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID} />
-            </head>
             <body className={notoSansKr.className}>
                 <div className="background-pattern" />
                 <Navbar />
                 <main className="pt-20">
                     {children}
                 </main>
-                <Script
-                    async
-                    src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID}`}
-                    crossOrigin="anonymous"
-                    strategy="afterInteractive"
-                />
             </body>
         </html>
     );

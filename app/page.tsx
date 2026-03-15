@@ -1,5 +1,5 @@
 import Calculator from "@/components/Calculator";
-import AdBanner from "@/components/AdBanner";
+import KakaoAdFit from "@/components/KakaoAdFit";
 
 import Link from "next/link";
 
@@ -23,9 +23,9 @@ export default function Home() {
             {/* Ad Section */}
             <div className="ad-section text-center">
                 {/* Top Banner */}
-                <AdBanner
-                    dataAdClient="ca-pub-9920611646006709"
-                    dataAdSlot="2096389068"
+                <KakaoAdFit
+                    pc={{ unit: process.env.NEXT_PUBLIC_KAKAO_ADFIT_PC_UNIT!, width: 728, height: 90 }}
+                    mobile={{ unit: process.env.NEXT_PUBLIC_KAKAO_ADFIT_MOBILE_UNIT!, width: 320, height: 100 }}
                 />
             </div>
 
@@ -35,10 +35,10 @@ export default function Home() {
                 {/* Ad Section */}
                 <div className="ad-section text-center">
                     {/* Middle Banner */}
-                    <AdBanner
-                        dataAdClient="ca-pub-9920611646006709"
-                        dataAdSlot="4437828987"
-                    />
+                    <KakaoAdFit
+                    pc={{ unit: process.env.NEXT_PUBLIC_KAKAO_ADFIT_PC_UNIT!, width: 728, height: 90 }}
+                    mobile={{ unit: process.env.NEXT_PUBLIC_KAKAO_ADFIT_MOBILE_UNIT!, width: 320, height: 100 }}
+                />
                 </div>
 
 
