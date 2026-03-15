@@ -1239,6 +1239,64 @@ input[type="number"] {
     transform: translateY(-1px);
 }
 
+/* Modal Guide */
+.modal-guide {
+    background: rgba(0, 212, 170, 0.05);
+    border: 1px solid rgba(0, 212, 170, 0.15);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.modal-guide-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary-light);
+    margin-bottom: 0.6rem;
+}
+
+.modal-guide-steps {
+    list-style: none;
+    counter-reset: guide-step;
+    padding: 0;
+    margin: 0;
+}
+
+.modal-guide-steps li {
+    counter-increment: guide-step;
+    position: relative;
+    padding-left: 1.75rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 0.35rem;
+}
+
+.modal-guide-steps li:last-child {
+    margin-bottom: 0;
+}
+
+.modal-guide-steps li::before {
+    content: counter(guide-step);
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(0, 212, 170, 0.15);
+    color: var(--primary);
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-guide-steps li strong {
+    color: var(--text-primary);
+}
+
 /* 모달 스타일 */
 .modal-overlay {
     display: none;

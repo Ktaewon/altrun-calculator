@@ -333,6 +333,78 @@ export default function Calculator() {
         prevTotalsRef.current = currentTotals;
     }, [results]);
 
+    // --- Modal Guide ---
+    const renderModalGuide = () => {
+        if (activeModal === null) return null;
+        switch (activeModal) {
+            case 1:
+                return (
+                    <div className="modal-guide">
+                        <div className="modal-guide-title">📋 이용 조건</div>
+                        <ol className="modal-guide-steps">
+                            <li>공시지원금({formatNumber(publicSubsidy)}원) + 추가지원금({formatNumber(publicExtraSubsidy)}원) + 판매점 지원금({formatNumber(publicStoreSubsidy)}원)을 받고 단말기 구매</li>
+                            <li>고가 요금제({formatNumber(publicPlanCost)}원/월)로 <strong>{publicMinMonths}개월</strong> 의무 유지</li>
+                            <li>이후 저가 요금제({formatNumber(publicLowPlanCost)}원/월)로 변경하여 나머지 <strong>{Math.max(0, totalPeriod - publicMinMonths)}개월</strong> 사용</li>
+                            {publicVasMonths > 0 && <li>부가서비스({formatNumber(publicVasCost)}원/월) {publicVasMonths}개월 유지 후 해지</li>}
+                            <li>총 <strong>{totalPeriod}개월</strong> 동일 통신사 유지</li>
+                        </ol>
+                    </div>
+                );
+            case 2:
+                return (
+                    <div className="modal-guide">
+                        <div className="modal-guide-title">📋 이용 조건</div>
+                        <ol className="modal-guide-steps">
+                            <li>선택약정({selectDiscountRate}% 할인) + 판매점 지원금({formatNumber(selectStoreSubsidy)}원)으로 단말기 구매</li>
+                            <li>고가 요금제({formatNumber(selectPlanCost)}원/월, 할인 후 {formatNumber(selectPlanCost * (1 - selectDiscountRate / 100))}원)로 <strong>{selectMinMonths}개월</strong> 의무 유지</li>
+                            <li>이후 저가 요금제({formatNumber(selectLowPlanCost)}원/월, 할인 후 {formatNumber(selectLowPlanCost * (1 - selectDiscountRate / 100))}원)로 변경하여 나머지 <strong>{Math.max(0, totalPeriod - selectMinMonths)}개월</strong> 사용</li>
+                            {selectVasMonths > 0 && <li>부가서비스({formatNumber(selectVasCost)}원/월) {selectVasMonths}개월 유지 후 해지</li>}
+                            <li>총 <strong>{totalPeriod}개월</strong> 동일 통신사에서 선택약정 유지</li>
+                        </ol>
+                    </div>
+                );
+            case 3:
+                return (
+                    <div className="modal-guide">
+                        <div className="modal-guide-title">📋 이용 조건</div>
+                        <ol className="modal-guide-steps">
+                            <li>선택약정({selectDiscountRate}% 할인) + 추가지원금({formatNumber(selectExtraSubsidy)}원) + 판매점 지원금({formatNumber(selectStoreSubsidy)}원)으로 단말기 구매</li>
+                            <li>고가 요금제({formatNumber(selectPlanCost)}원/월, 할인 후 {formatNumber(selectPlanCost * (1 - selectDiscountRate / 100))}원)로 <strong>6개월</strong> 의무 유지 (추가지원금 조건)</li>
+                            <li>이후 저가 요금제({formatNumber(selectLowPlanCost)}원/월, 할인 후 {formatNumber(selectLowPlanCost * (1 - selectDiscountRate / 100))}원)로 변경하여 나머지 <strong>{Math.max(0, totalPeriod - 6)}개월</strong> 사용</li>
+                            {selectVasMonths > 0 && <li>부가서비스({formatNumber(selectVasCost)}원/월) {selectVasMonths}개월 유지 후 해지</li>}
+                            <li>총 <strong>{totalPeriod}개월</strong> 동일 통신사에서 선택약정 유지</li>
+                        </ol>
+                    </div>
+                );
+            case 4:
+                return (
+                    <div className="modal-guide">
+                        <div className="modal-guide-title">📋 이용 조건</div>
+                        <ol className="modal-guide-steps">
+                            <li>선택약정({selectDiscountRate}% 할인) + 판매점 지원금({formatNumber(selectStoreSubsidy)}원)으로 단말기 구매</li>
+                            {Math.min(selectMinMonths, mvnoMoveMonths) > 0 && <li>고가 요금제({formatNumber(selectPlanCost)}원/월)로 <strong>{Math.min(selectMinMonths, mvnoMoveMonths)}개월</strong> 유지</li>}
+                            {mvnoMoveMonths > selectMinMonths && <li>저가 요금제({formatNumber(selectLowPlanCost)}원/월)로 변경하여 <strong>{mvnoMoveMonths - selectMinMonths}개월</strong> 추가 유지</li>}
+                            <li><strong>{mvnoMoveMonths}개월 후</strong> 선택약정 해지 → 할인반환금({formatNumber(results.methods[3].penalty)}원) 납부</li>
+                            <li>알뜰폰(MVNO)으로 번호이동 → 유심/eSIM 비용({formatNumber(usimCost)}원)</li>
+                            <li>알뜰폰 요금제({formatNumber(mvnoPlanCost)}원/월)로 나머지 <strong>{Math.max(0, totalPeriod - mvnoMoveMonths)}개월</strong> 사용</li>
+                            <li>총 사용 기간: <strong>{totalPeriod}개월</strong> (통신사 {mvnoMoveMonths}개월 + 알뜰폰 {Math.max(0, totalPeriod - mvnoMoveMonths)}개월)</li>
+                        </ol>
+                    </div>
+                );
+            default: // 5
+                return (
+                    <div className="modal-guide">
+                        <div className="modal-guide-title">📋 이용 조건</div>
+                        <ol className="modal-guide-steps">
+                            <li>자급제 채널(쿠팡, 11번가, 애플스토어 등)에서 단말기를 {formatNumber(selfPurchasePrice)}원에 직접 구매</li>
+                            <li>처음부터 알뜰폰(MVNO) 요금제({formatNumber(mvnoPlanCost)}원/월) 가입</li>
+                            <li>통신사 약정 없이 <strong>{totalPeriod}개월</strong> 자유롭게 사용</li>
+                        </ol>
+                    </div>
+                );
+        }
+    };
+
     // --- Modal Logic ---
     const renderModalContent = () => {
         if (activeModal === null) return null;
@@ -639,6 +711,7 @@ export default function Calculator() {
                             <button className="modal-close" onClick={() => setActiveModal(null)}>&times;</button>
                         </div>
                         <div className="modal-body">
+                            {renderModalGuide()}
                             {renderModalContent()}
                         </div>
                         <div className="modal-footer">
