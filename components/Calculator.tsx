@@ -718,7 +718,7 @@ function InputField({ label, value, onChange, unit, id, min, max, hint, hintClas
                 {label}
                 {tooltip && (
                     <span className="tooltip-wrap">
-                        <span className="tooltip-icon">ℹ️</span>
+                        <span className="tooltip-icon">i</span>
                         <span className="tooltip-text">{tooltip}</span>
                     </span>
                 )}
