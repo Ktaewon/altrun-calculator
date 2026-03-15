@@ -24,8 +24,8 @@ export default function Home() {
             <div className="ad-section text-center">
                 {/* Top Banner */}
                 <KakaoAdFit
-                    pc={{ unit: "DAN-3QCqeS4sCSR6ul82", width: 728, height: 90 }}
-                    mobile={{ unit: "DAN-RlzYjFDwdtQxBCPD", width: 320, height: 100 }}
+                    pc={{ unit: process.env.NEXT_PUBLIC_KAKAO_ADFIT_PC_UNIT!, width: 728, height: 90 }}
+                    mobile={{ unit: process.env.NEXT_PUBLIC_KAKAO_ADFIT_MOBILE_UNIT!, width: 320, height: 100 }}
                 />
             </div>
 
@@ -36,8 +36,8 @@ export default function Home() {
                 <div className="ad-section text-center">
                     {/* Middle Banner */}
                     <KakaoAdFit
-                    pc={{ unit: "DAN-3QCqeS4sCSR6ul82", width: 728, height: 90 }}
-                    mobile={{ unit: "DAN-RlzYjFDwdtQxBCPD", width: 320, height: 100 }}
+                    pc={{ unit: process.env.NEXT_PUBLIC_KAKAO_ADFIT_PC_UNIT!, width: 728, height: 90 }}
+                    mobile={{ unit: process.env.NEXT_PUBLIC_KAKAO_ADFIT_MOBILE_UNIT!, width: 320, height: 100 }}
                 />
                 </div>
 
