@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 let sdkLoaded = false;
 
@@ -17,7 +17,6 @@ interface KakaoAdFitProps {
 }
 
 export default function KakaoAdFit({ pc, mobile, className }: KakaoAdFitProps) {
-    const insRef = useRef<HTMLModElement>(null);
     const [isMobile, setIsMobile] = useState(false);
     const [mounted, setMounted] = useState(false);
 
@@ -32,8 +31,6 @@ export default function KakaoAdFit({ pc, mobile, className }: KakaoAdFitProps) {
     }, []);
 
     useEffect(() => {
-        if (!mounted || !insRef.current) return;
-
         if (!sdkLoaded) {
             sdkLoaded = true;
             const script = document.createElement("script");
@@ -41,7 +38,7 @@ export default function KakaoAdFit({ pc, mobile, className }: KakaoAdFitProps) {
             script.async = true;
             document.body.appendChild(script);
         }
-    }, [mounted, isMobile]);
+    }, []);
 
     if (!mounted) return null;
 
@@ -50,7 +47,6 @@ export default function KakaoAdFit({ pc, mobile, className }: KakaoAdFitProps) {
     return (
         <ins
             key={ad.unit}
-            ref={insRef}
             className={`kakao_ad_area${className ? ` ${className}` : ""}`}
             style={{ display: "none" }}
             data-ad-unit={ad.unit}
