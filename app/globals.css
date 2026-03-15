@@ -331,8 +331,7 @@ body {
 .tooltip-text {
     position: absolute;
     bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
     background: var(--bg-card);
     color: var(--text-secondary);
     font-size: 0.75rem;
@@ -357,8 +356,7 @@ body {
     content: '';
     position: absolute;
     top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 10px;
     border: 5px solid transparent;
     border-top-color: var(--border);
 }
@@ -1188,8 +1186,6 @@ input[type="number"] {
     }
 
     .tooltip-text {
-        left: 0;
-        transform: translateX(0);
         max-width: 200px;
     }
 
