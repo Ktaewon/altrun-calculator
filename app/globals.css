@@ -353,7 +353,7 @@ body {
 
 .tooltip-text {
     position: absolute;
-    bottom: calc(100% + 8px);
+    top: calc(100% + 8px);
     left: 0;
     background: var(--bg-card);
     color: var(--text-secondary);
@@ -378,10 +378,10 @@ body {
 .tooltip-text::after {
     content: '';
     position: absolute;
-    top: 100%;
+    bottom: 100%;
     left: 10px;
     border: 5px solid transparent;
-    border-top-color: var(--border);
+    border-bottom-color: var(--border);
 }
 
 .tooltip-wrap:hover .tooltip-text {

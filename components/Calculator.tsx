@@ -544,7 +544,7 @@ export default function Calculator() {
             {/* Phase 8: Disclaimer banner */}
             <div className="disclaimer-banner">
                 <span className="disclaimer-icon">⚠️</span>
-                <span>본 계산기의 결과는 참고용이며, 실제 비용은 통신사 정책 및 프로모션에 따라 달라질 수 있습니다.</span>
+                <span>정확한 비교를 위해 위 공시지원금 조건과 선택약정 조건을 모두 입력해주세요. 결과는 참고용이며, 실제 비용은 통신사 정책에 따라 달라질 수 있습니다.</span>
             </div>
 
             {/* 5가지 방식 비교 */}
