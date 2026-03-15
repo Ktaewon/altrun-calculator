@@ -441,10 +441,11 @@ export default function Calculator() {
                         <div className="card-header">
                             <span className="card-icon">📲</span><h2>단말기 정보</h2>
                         </div>
+                        <p className="card-desc">구매하려는 단말기의 가격 정보를 입력하세요</p>
                         <div className="card-body">
                             <div className="input-row">
-                                <InputField label="단말기 출고가" id="devicePrice" value={devicePrice} onChange={setDevicePrice} unit="원" />
-                                <InputField label="자급제 구매가" id="selfPurchasePrice" value={selfPurchasePrice} onChange={setSelfPurchasePrice} unit="원" hint="쿠팡/11번가 등 자급제 가격" />
+                                <InputField label="단말기 출고가" id="devicePrice" value={devicePrice} onChange={setDevicePrice} unit="원" tooltip="통신사 공식 출고가 (SKT/KT/LGU+ 홈페이지 확인)" />
+                                <InputField label="자급제 구매가" id="selfPurchasePrice" value={selfPurchasePrice} onChange={setSelfPurchasePrice} unit="원" hint="쿠팡/11번가 등 자급제 가격" tooltip="쿠팡, 11번가, 애플스토어 등 자급제 채널 구매 가격" />
                             </div>
                         </div>
                     </section>
@@ -453,13 +454,14 @@ export default function Calculator() {
                         <div className="card-header">
                             <span className="card-icon">⚙️</span><h2>공통 설정</h2>
                         </div>
+                        <p className="card-desc">모든 구매 방식에 공통으로 적용되는 설정입니다</p>
                         <div className="card-body">
                             <div className="input-row">
-                                <InputField label="총 사용 기간" id="totalPeriod" value={totalPeriod} onChange={setTotalPeriod} unit="개월" min={12} max={48} />
-                                <InputField label="알뜰폰 요금제" id="mvnoPlanCost" value={mvnoPlanCost} onChange={setMvnoPlanCost} unit="원/월" />
+                                <InputField label="총 사용 기간" id="totalPeriod" value={totalPeriod} onChange={setTotalPeriod} unit="개월" min={12} max={48} tooltip="단말기를 총 사용할 기간. 보통 24개월 기준으로 비교합니다" />
+                                <InputField label="알뜰폰 요금제" id="mvnoPlanCost" value={mvnoPlanCost} onChange={setMvnoPlanCost} unit="원/월" tooltip="알뜰폰(MVNO) 이동 시 사용할 요금제 월 요금" />
                             </div>
                             <div className="input-row">
-                                <InputField label="유심/eSIM 비용" id="usimCost" value={usimCost} onChange={setUsimCost} unit="원" />
+                                <InputField label="유심/eSIM 비용" id="usimCost" value={usimCost} onChange={setUsimCost} unit="원" tooltip="알뜰폰 이동 시 필요한 유심칩 또는 eSIM 발급 비용" />
                             </div>
                         </div>
                     </section>
@@ -472,27 +474,28 @@ export default function Calculator() {
                             <span className="card-icon">💵</span><h2>공시지원금 조건</h2>
                             <span className={`chevron ${openSections.has('public') ? 'open' : ''}`}>▼</span>
                         </div>
+                        <p className="card-desc">통신사에서 공시한 지원금 기반의 구매 조건을 입력하세요</p>
                         <div className={`card-body-wrapper ${openSections.has('public') ? 'open' : ''}`}>
                             <div className="card-body">
                                 <div className="input-row">
-                                    <InputField label="공시지원금" value={publicSubsidy} onChange={setPublicSubsidy} unit="원" />
-                                    <InputField label="추가지원금" value={publicExtraSubsidy} onChange={setPublicExtraSubsidy} unit="원" hint="⚠️ 6개월 이전 해지 시 반환" hintClass="warning" />
+                                    <InputField label="공시지원금" value={publicSubsidy} onChange={setPublicSubsidy} unit="원" tooltip="통신사가 공시한 단말기 보조금. 요금제에 따라 금액이 다릅니다" />
+                                    <InputField label="추가지원금" value={publicExtraSubsidy} onChange={setPublicExtraSubsidy} unit="원" hint="⚠️ 6개월 이전 해지 시 반환" hintClass="warning" tooltip="공시지원금에 추가 지급되는 보조금. 6개월 이내 해지 시 반환해야 합니다" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="판매점 지원금" value={publicStoreSubsidy} onChange={setPublicStoreSubsidy} unit="원" hint="반환 불필요" />
-                                    <InputField label="의무 유지 기간" value={publicMinMonths} onChange={setPublicMinMonths} unit="개월" min={1} max={24} hint="보통 6개월" />
+                                    <InputField label="판매점 지원금" value={publicStoreSubsidy} onChange={setPublicStoreSubsidy} unit="원" hint="반환 불필요" tooltip="대리점/매장에서 자체 지원하는 금액. 해지해도 반환 불필요" />
+                                    <InputField label="의무 유지 기간" value={publicMinMonths} onChange={setPublicMinMonths} unit="개월" min={1} max={24} hint="보통 6개월" tooltip="고가 요금제를 반드시 유지해야 하는 최소 기간" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="공시 요금제 (고가)" value={publicPlanCost} onChange={setPublicPlanCost} unit="원/월" hint="의무 유지 기간 동안" />
-                                    <InputField label="이후 요금제 (저가)" value={publicLowPlanCost} onChange={setPublicLowPlanCost} unit="원/월" hint="의무 유지 후 하향 가능" />
+                                    <InputField label="공시 요금제 (고가)" value={publicPlanCost} onChange={setPublicPlanCost} unit="원/월" hint="의무 유지 기간 동안" tooltip="의무 유지 기간 동안 사용해야 하는 요금제 월 요금" />
+                                    <InputField label="이후 요금제 (저가)" value={publicLowPlanCost} onChange={setPublicLowPlanCost} unit="원/월" hint="의무 유지 후 하향 가능" tooltip="의무 유지 후 변경 가능한 저가 요금제 월 요금" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="부가서비스 금액" value={publicVasCost} onChange={setPublicVasCost} unit="원/월" hint="의무 가입 부가서비스" />
-                                    <InputField label="부가서비스 유지 기간" value={publicVasMonths} onChange={setPublicVasMonths} unit="개월" min={0} max={24} />
+                                    <InputField label="부가서비스 금액" value={publicVasCost} onChange={setPublicVasCost} unit="원/월" hint="의무 가입 부가서비스" tooltip="가입 시 필수 가입 부가서비스의 월 요금 (보험, 멤버십 등)" />
+                                    <InputField label="부가서비스 유지 기간" value={publicVasMonths} onChange={setPublicVasMonths} unit="개월" min={0} max={24} tooltip="부가서비스를 유지해야 하는 최소 기간. 이후 해지 가능" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="결합할인 (고가)" value={publicHighCombineDiscount} onChange={setPublicHighCombineDiscount} unit="원/월" hint="고가 요금제 결합할인" />
-                                    <InputField label="결합할인 (저가)" value={publicLowCombineDiscount} onChange={setPublicLowCombineDiscount} unit="원/월" hint="저가 요금제 결합할인" />
+                                    <InputField label="결합할인 (고가)" value={publicHighCombineDiscount} onChange={setPublicHighCombineDiscount} unit="원/월" hint="고가 요금제 결합할인" tooltip="인터넷/TV 결합 시 고가 요금제에서 할인되는 월 금액" />
+                                    <InputField label="결합할인 (저가)" value={publicLowCombineDiscount} onChange={setPublicLowCombineDiscount} unit="원/월" hint="저가 요금제 결합할인" tooltip="인터넷/TV 결합 시 저가 요금제에서 할인되는 월 금액" />
                                 </div>
                             </div>
                         </div>
@@ -503,30 +506,31 @@ export default function Calculator() {
                             <span className="card-icon">📝</span><h2>선택약정 조건</h2>
                             <span className={`chevron ${openSections.has('select') ? 'open' : ''}`}>▼</span>
                         </div>
+                        <p className="card-desc">선택약정 할인 및 알뜰폰 이동(알뜰런) 관련 조건을 입력하세요</p>
                         <div className={`card-body-wrapper ${openSections.has('select') ? 'open' : ''}`}>
                             <div className="card-body">
                                 <div className="input-row">
-                                    <InputField label="추가지원금" value={selectExtraSubsidy} onChange={setSelectExtraSubsidy} unit="원" hint="⚠️ 6개월 이전 해지 시 반환" hintClass="warning" />
-                                    <InputField label="판매점 지원금" value={selectStoreSubsidy} onChange={setSelectStoreSubsidy} unit="원" hint="반환 불필요" />
+                                    <InputField label="추가지원금" value={selectExtraSubsidy} onChange={setSelectExtraSubsidy} unit="원" hint="⚠️ 6개월 이전 해지 시 반환" hintClass="warning" tooltip="추가 지급 보조금. 6개월 이내 해지 시 반환 필요" />
+                                    <InputField label="판매점 지원금" value={selectStoreSubsidy} onChange={setSelectStoreSubsidy} unit="원" hint="반환 불필요" tooltip="대리점/매장 자체 지원금. 해지해도 반환 불필요" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="선택약정 할인율" value={selectDiscountRate} onChange={setSelectDiscountRate} unit="%" />
-                                    <InputField label="의무 유지 기간" value={selectMinMonths} onChange={setSelectMinMonths} unit="개월" min={1} max={24} hint="요금제 유지 필수 기간" />
+                                    <InputField label="선택약정 할인율" value={selectDiscountRate} onChange={setSelectDiscountRate} unit="%" tooltip="선택약정 시 요금제에서 할인받는 비율. 보통 25%" />
+                                    <InputField label="의무 유지 기간" value={selectMinMonths} onChange={setSelectMinMonths} unit="개월" min={1} max={24} hint="요금제 유지 필수 기간" tooltip="선택약정 요금제를 유지해야 하는 최소 기간" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="선택약정 요금제 (고가)" value={selectPlanCost} onChange={setSelectPlanCost} unit="원/월" hint="의무 유지 기간 동안 요금제" />
-                                    <InputField label="이후 요금제 (저가)" value={selectLowPlanCost} onChange={setSelectLowPlanCost} unit="원/월" hint="의무 유지 후 변경 가능한 요금제" />
+                                    <InputField label="선택약정 요금제 (고가)" value={selectPlanCost} onChange={setSelectPlanCost} unit="원/월" hint="의무 유지 기간 동안 요금제" tooltip="선택약정 할인이 적용되는 고가 요금제 월 요금" />
+                                    <InputField label="이후 요금제 (저가)" value={selectLowPlanCost} onChange={setSelectLowPlanCost} unit="원/월" hint="의무 유지 후 변경 가능한 요금제" tooltip="의무 유지 후 변경 가능한 저가 요금제 월 요금" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="부가서비스 금액" value={selectVasCost} onChange={setSelectVasCost} unit="원/월" hint="의무 가입 부가서비스" />
-                                    <InputField label="부가서비스 유지 기간" value={selectVasMonths} onChange={setSelectVasMonths} unit="개월" min={0} max={24} />
+                                    <InputField label="부가서비스 금액" value={selectVasCost} onChange={setSelectVasCost} unit="원/월" hint="의무 가입 부가서비스" tooltip="필수 가입 부가서비스 월 요금" />
+                                    <InputField label="부가서비스 유지 기간" value={selectVasMonths} onChange={setSelectVasMonths} unit="개월" min={0} max={24} tooltip="부가서비스 최소 유지 기간" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="결합할인 (고가)" value={selectHighCombineDiscount} onChange={setSelectHighCombineDiscount} unit="원/월" hint="고가 요금제 결합할인" />
-                                    <InputField label="결합할인 (저가)" value={selectLowCombineDiscount} onChange={setSelectLowCombineDiscount} unit="원/월" hint="저가 요금제 결합할인" />
+                                    <InputField label="결합할인 (고가)" value={selectHighCombineDiscount} onChange={setSelectHighCombineDiscount} unit="원/월" hint="고가 요금제 결합할인" tooltip="인터넷/TV 결합 시 고가 요금제 할인 월 금액" />
+                                    <InputField label="결합할인 (저가)" value={selectLowCombineDiscount} onChange={setSelectLowCombineDiscount} unit="원/월" hint="저가 요금제 결합할인" tooltip="인터넷/TV 결합 시 저가 요금제 할인 월 금액" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="알뜰런 이동 시점" value={mvnoMoveMonths} onChange={setMvnoMoveMonths} unit="개월 후" min={1} max={24} hint="이 기간 후 알뜰폰 이동" />
+                                    <InputField label="알뜰런 이동 시점" value={mvnoMoveMonths} onChange={setMvnoMoveMonths} unit="개월 후" min={1} max={24} hint="이 기간 후 알뜰폰 이동" tooltip="선택약정 후 몇 개월 뒤 알뜰폰으로 이동할지 설정. 최적 타이밍은 하단 차트에서 확인" />
                                 </div>
                             </div>
                         </div>
@@ -676,9 +680,10 @@ interface InputFieldProps {
     max?: number;
     hint?: string;
     hintClass?: string;
+    tooltip?: string;
 }
 
-function InputField({ label, value, onChange, unit, id, min, max, hint, hintClass }: InputFieldProps) {
+function InputField({ label, value, onChange, unit, id, min, max, hint, hintClass, tooltip }: InputFieldProps) {
     const [isFocused, setIsFocused] = useState(false);
     const [displayValue, setDisplayValue] = useState(value.toLocaleString('ko-KR'));
 
@@ -709,7 +714,15 @@ function InputField({ label, value, onChange, unit, id, min, max, hint, hintClas
 
     return (
         <div className="input-group">
-            <label htmlFor={id}>{label}</label>
+            <label htmlFor={id}>
+                {label}
+                {tooltip && (
+                    <span className="tooltip-wrap">
+                        <span className="tooltip-icon">ℹ️</span>
+                        <span className="tooltip-text">{tooltip}</span>
+                    </span>
+                )}
+            </label>
             <div className="input-wrapper">
                 <input
                     type="text"
