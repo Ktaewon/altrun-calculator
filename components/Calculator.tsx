@@ -777,7 +777,7 @@ function InputField({ label, value, onChange, unit, id, min, max, hint, hintClas
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const raw = e.target.value.replace(/[^0-9.-]/g, '');
+        const raw = e.target.value.replace(/[^0-9]/g, '');
         setDisplayValue(raw);
         const num = Number(raw);
         if (!isNaN(num)) {
