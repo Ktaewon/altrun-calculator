@@ -1,18 +1,46 @@
 import type { Metadata } from "next";
-import { Noto_Sans_KR } from "next/font/google";
+import { JetBrains_Mono, Noto_Sans_KR } from "next/font/google";
+import Link from "next/link";
+import { siteDescription, siteKeywords, siteName, siteTitle, siteUrl } from "@/lib/site";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
 const notoSansKr = Noto_Sans_KR({ subsets: ["latin"] });
+const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
-    title: "알뜰런 유지비 계산기 - 호갱 탈출 필수품",
-    description: "공시지원금 vs 선택약정 vs 자급제+알뜰폰. 내 상황에 딱 맞는 최저가 구매 방식을 3초 만에 계산해보세요.",
-    keywords: "알뜰폰, 자급제, 공시지원금, 선택약정, 알뜰런, 휴대폰 계산기, 스마트폰 요금 계산",
+    metadataBase: new URL(siteUrl),
+    title: {
+        default: siteTitle,
+        template: `%s | ${siteName}`,
+    },
+    description: siteDescription,
+    keywords: siteKeywords,
+    applicationName: siteName,
+    icons: {
+        icon: "/phone-cost-mark.svg",
+        shortcut: "/phone-cost-mark.svg",
+        apple: "/phone-cost-mark.svg",
+    },
+    alternates: {
+        canonical: "/",
+    },
+    robots: {
+        index: true,
+        follow: true,
+    },
     openGraph: {
-        title: "알뜰런 유지비 계산기",
-        description: "호갱 탈출을 위한 필수 도구! 최저가 구매 방식을 계산해보세요.",
+        title: siteTitle,
+        description: siteDescription,
         type: "website",
+        url: siteUrl,
+        siteName,
+        locale: "ko_KR",
+    },
+    twitter: {
+        card: "summary",
+        title: siteTitle,
+        description: siteDescription,
     },
 };
 
@@ -21,14 +49,40 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const themeScript = `
+        (() => {
+            try {
+                const stored = localStorage.getItem('theme-preference');
+                const theme = stored === 'light' || stored === 'dark'
+                    ? stored
+                    : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.dataset.theme = theme;
+                document.documentElement.style.colorScheme = theme;
+            } catch (error) {
+                document.documentElement.dataset.theme = 'dark';
+                document.documentElement.style.colorScheme = 'dark';
+            }
+        })();
+    `;
+
     return (
-        <html lang="ko">
-            <body className={notoSansKr.className}>
+        <html lang="ko" suppressHydrationWarning>
+            <head>
+                <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+            </head>
+            <body className={`${notoSansKr.className} ${jetbrainsMono.variable}`}>
                 <div className="background-pattern" />
                 <Navbar />
                 <main className="pt-20">
                     {children}
                 </main>
+                <footer className="site-footer">
+                    <p>&copy; 2026 {siteName}. All rights reserved.</p>
+                    <div className="site-footer-links">
+                        <Link href="/privacy">개인정보처리방침</Link>
+                        <Link href="/guide">구매 방식 가이드</Link>
+                    </div>
+                </footer>
             </body>
         </html>
     );

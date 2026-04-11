@@ -31,6 +31,10 @@ interface MethodResult extends CalculationResult {
 
 const methodNames = ['공시지원금', '선택약정', '선택약정+추가지원금', '선택약정+알뜰런', '자급제+알뜰폰'];
 
+function formatInputThousands(num: number): string {
+    return String(Math.round(num)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
 export default function Calculator() {
     // --- State ---
 
@@ -70,9 +74,25 @@ export default function Calculator() {
 
     // Modal State
     const [activeModal, setActiveModal] = useState<number | null>(null);
+    const modalRef = useRef<HTMLDivElement>(null);
+
+    // Modal accessibility: Escape close, body scroll lock, focus
+    useEffect(() => {
+        if (activeModal === null) return;
+        document.body.style.overflow = 'hidden';
+        modalRef.current?.focus();
+        const handler = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setActiveModal(null);
+        };
+        document.addEventListener('keydown', handler);
+        return () => {
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', handler);
+        };
+    }, [activeModal]);
 
     // Phase 1: Accordion state
-    const [openSections, setOpenSections] = useState<Set<string>>(new Set());
+    const [openSections, setOpenSections] = useState<Set<string>>(new Set(['public']));
     const toggleSection = (key: string) => {
         setOpenSections(prev => {
             const next = new Set(prev);
@@ -270,11 +290,11 @@ export default function Calculator() {
 
         // Add badges
         const badgeConfigs: Record<number, { class: string; text: string }> = {
-            1: { class: 'badge-primary', text: '최저가' },
-            2: { class: 'badge-success', text: '추천' },
-            3: { class: 'badge-warning', text: '보통' },
-            4: { class: 'badge-warning', text: '보통' },
-            5: { class: 'badge-danger', text: '비추천' }
+            1: { class: 'badge-primary', text: '가장 낮음' },
+            2: { class: 'badge-success', text: '대안' },
+            3: { class: 'badge-warning', text: '비교 필요' },
+            4: { class: 'badge-warning', text: '비교 필요' },
+            5: { class: 'badge-danger', text: '비용 높음' }
         };
 
         const finalMethods = methods.map((m, i) => ({
@@ -340,7 +360,7 @@ export default function Calculator() {
             case 1:
                 return (
                     <div className="modal-guide">
-                        <div className="modal-guide-title">📋 이용 조건</div>
+                        <div className="modal-guide-title">계산 기준</div>
                         <ol className="modal-guide-steps">
                             <li>공시지원금({formatNumber(publicSubsidy)}원) + 추가지원금({formatNumber(publicExtraSubsidy)}원) + 판매점 지원금({formatNumber(publicStoreSubsidy)}원)을 받고 단말기 구매</li>
                             <li>고가 요금제({formatNumber(publicPlanCost)}원/월)로 <strong>{publicMinMonths}개월</strong> 의무 유지</li>
@@ -353,7 +373,7 @@ export default function Calculator() {
             case 2:
                 return (
                     <div className="modal-guide">
-                        <div className="modal-guide-title">📋 이용 조건</div>
+                        <div className="modal-guide-title">계산 기준</div>
                         <ol className="modal-guide-steps">
                             <li>선택약정({selectDiscountRate}% 할인) + 판매점 지원금({formatNumber(selectStoreSubsidy)}원)으로 단말기 구매</li>
                             <li>고가 요금제({formatNumber(selectPlanCost)}원/월, 할인 후 {formatNumber(selectPlanCost * (1 - selectDiscountRate / 100))}원)로 <strong>{selectMinMonths}개월</strong> 의무 유지</li>
@@ -366,7 +386,7 @@ export default function Calculator() {
             case 3:
                 return (
                     <div className="modal-guide">
-                        <div className="modal-guide-title">📋 이용 조건</div>
+                        <div className="modal-guide-title">계산 기준</div>
                         <ol className="modal-guide-steps">
                             <li>선택약정({selectDiscountRate}% 할인) + 추가지원금({formatNumber(selectExtraSubsidy)}원) + 판매점 지원금({formatNumber(selectStoreSubsidy)}원)으로 단말기 구매</li>
                             <li>고가 요금제({formatNumber(selectPlanCost)}원/월, 할인 후 {formatNumber(selectPlanCost * (1 - selectDiscountRate / 100))}원)로 <strong>6개월</strong> 의무 유지 (추가지원금 조건)</li>
@@ -379,7 +399,7 @@ export default function Calculator() {
             case 4:
                 return (
                     <div className="modal-guide">
-                        <div className="modal-guide-title">📋 이용 조건</div>
+                        <div className="modal-guide-title">계산 기준</div>
                         <ol className="modal-guide-steps">
                             <li>선택약정({selectDiscountRate}% 할인) + 판매점 지원금({formatNumber(selectStoreSubsidy)}원)으로 단말기 구매</li>
                             {Math.min(selectMinMonths, mvnoMoveMonths) > 0 && <li>고가 요금제({formatNumber(selectPlanCost)}원/월)로 <strong>{Math.min(selectMinMonths, mvnoMoveMonths)}개월</strong> 유지</li>}
@@ -394,7 +414,7 @@ export default function Calculator() {
             default: // 5
                 return (
                     <div className="modal-guide">
-                        <div className="modal-guide-title">📋 이용 조건</div>
+                        <div className="modal-guide-title">계산 기준</div>
                         <ol className="modal-guide-steps">
                             <li>자급제 채널(쿠팡, 11번가, 애플스토어 등)에서 단말기를 {formatNumber(selfPurchasePrice)}원에 직접 구매</li>
                             <li>처음부터 알뜰폰(MVNO) 요금제({formatNumber(mvnoPlanCost)}원/월) 가입</li>
@@ -415,7 +435,7 @@ export default function Calculator() {
                 return (
                     <>
                         <div className="modal-section">
-                            <div className="modal-section-title">📱 단말기 비용</div>
+                            <div className="modal-section-title">단말기 비용</div>
                             <div className="modal-row"><span className="modal-row-label">출고가</span><span className="modal-row-value">{formatNumber(devicePrice)}원</span></div>
                             <div className="modal-row discount"><span className="modal-row-label">공시지원금</span><span className="modal-row-value">-{formatNumber(publicSubsidy)}원</span></div>
                             <div className="modal-row discount"><span className="modal-row-label">추가지원금</span><span className="modal-row-value">-{formatNumber(publicExtraSubsidy)}원</span></div>
@@ -423,7 +443,7 @@ export default function Calculator() {
                             <div className="modal-row subtotal"><span className="modal-row-label">단말기 실구매가</span><span className="modal-row-value">{formatNumber(m.device)}원</span></div>
                         </div>
                         <div className="modal-section">
-                            <div className="modal-section-title">📶 요금제 비용 ({totalPeriod}개월)</div>
+                            <div className="modal-section-title">요금제 비용 ({totalPeriod}개월)</div>
                             <div className="modal-row">
                                 <span className="modal-row-label">고가 요금제 ({m.highMonths}개월)</span>
                                 <span className="modal-row-value">{formatNumber(m.highPlan!)}원</span>
@@ -438,7 +458,7 @@ export default function Calculator() {
                         </div>
                         {m.vasMonths > 0 &&
                             <div className="modal-section">
-                                <div className="modal-section-title">➕ 부가서비스</div>
+                                <div className="modal-section-title">부가서비스</div>
                                 <div className="modal-row"><span className="modal-row-label">부가서비스 ({m.vasMonths}개월)</span><span className="modal-row-value">{formatNumber(m.vas)}원</span></div>
                             </div>}
                     </>
@@ -448,34 +468,34 @@ export default function Calculator() {
                 return (
                     <>
                         <div className="modal-section">
-                            <div className="modal-section-title">📱 단말기 비용</div>
+                            <div className="modal-section-title">단말기 비용</div>
                             <div className="modal-row"><span className="modal-row-label">출고가</span><span className="modal-row-value">{formatNumber(devicePrice)}원</span></div>
-                            {activeModal === 3 && <div className="modal-row discount"><span className="modal-row-label">추가지원금 ⚠️</span><span className="modal-row-value">-{formatNumber(selectExtraSubsidy)}원</span></div>}
+                            {activeModal === 3 && <div className="modal-row discount"><span className="modal-row-label">추가지원금 (6개월 조건)</span><span className="modal-row-value">-{formatNumber(selectExtraSubsidy)}원</span></div>}
                             <div className="modal-row discount"><span className="modal-row-label">판매점 지원금</span><span className="modal-row-value">-{formatNumber(selectStoreSubsidy)}원</span></div>
                             <div className="modal-row subtotal"><span className="modal-row-label">단말기 실구매가</span><span className="modal-row-value">{formatNumber(m.device)}원</span></div>
                         </div>
                         <div className="modal-section">
-                            <div className="modal-section-title">📶 요금제 비용 (선택약정 {selectDiscountRate}% 할인)</div>
+                            <div className="modal-section-title">요금제 비용 (선택약정 {selectDiscountRate}% 할인)</div>
                             <div className="modal-row"><span className="modal-row-label">고가 요금제 ({m.highMonths}개월)</span><span className="modal-row-value">{formatNumber(m.highPlan!)}원</span></div>
                             {selectHighCombineDiscount > 0 && <div className="modal-row discount"><span className="modal-row-label">└ 결합할인</span><span className="modal-row-value">-{formatNumber(selectHighCombineDiscount)}원/월</span></div>}
                             <div className="modal-row"><span className="modal-row-label">저가 요금제 ({m.lowMonths}개월)</span><span className="modal-row-value">{formatNumber(m.lowPlan!)}원</span></div>
                             {selectLowCombineDiscount > 0 && <div className="modal-row discount"><span className="modal-row-label">└ 결합할인</span><span className="modal-row-value">-{formatNumber(selectLowCombineDiscount)}원/월</span></div>}
                             <div className="modal-row subtotal"><span className="modal-row-label">요금제 소계</span><span className="modal-row-value">{formatNumber(m.plan)}원</span></div>
                         </div>
-                        {m.vasMonths > 0 && <div className="modal-section"><div className="modal-section-title">➕ 부가서비스</div><div className="modal-row"><span className="modal-row-label">부가서비스 ({m.vasMonths}개월)</span><span className="modal-row-value">{formatNumber(m.vas)}원</span></div></div>}
+                        {m.vasMonths > 0 && <div className="modal-section"><div className="modal-section-title">부가서비스</div><div className="modal-row"><span className="modal-row-label">부가서비스 ({m.vasMonths}개월)</span><span className="modal-row-value">{formatNumber(m.vas)}원</span></div></div>}
                     </>
                 );
             case 4: // 알뜰런
                 return (
                     <>
                         <div className="modal-section">
-                            <div className="modal-section-title">📱 단말기 비용</div>
+                            <div className="modal-section-title">단말기 비용</div>
                             <div className="modal-row"><span className="modal-row-label">출고가</span><span className="modal-row-value">{formatNumber(devicePrice)}원</span></div>
                             <div className="modal-row discount"><span className="modal-row-label">판매점 지원금</span><span className="modal-row-value">-{formatNumber(selectStoreSubsidy)}원</span></div>
                             <div className="modal-row subtotal"><span className="modal-row-label">단말기 실구매가</span><span className="modal-row-value">{formatNumber(m.device)}원</span></div>
                         </div>
                         <div className="modal-section">
-                            <div className="modal-section-title">📶 요금제 비용</div>
+                            <div className="modal-section-title">요금제 비용</div>
                             <div className="modal-row"><span className="modal-row-label">고가 요금제 ({m.highMonths}개월)</span><span className="modal-row-value">{formatNumber(m.highPlan!)}원</span></div>
                             <div className="modal-row"><span className="modal-row-label">저가 요금제 ({m.lowMonths}개월)</span><span className="modal-row-value">{formatNumber(m.lowPlan!)}원</span></div>
                             <div className="modal-row"><span className="modal-row-label">알뜰폰 ({m.mvnoMonths}개월)</span><span className="modal-row-value">{formatNumber(m.mvno!)}원</span></div>
@@ -489,11 +509,11 @@ export default function Calculator() {
                 return (
                     <>
                         <div className="modal-section">
-                            <div className="modal-section-title">📱 단말기 비용</div>
+                            <div className="modal-section-title">단말기 비용</div>
                             <div className="modal-row"><span className="modal-row-label">자급제 구매가</span><span className="modal-row-value">{formatNumber(selfPurchasePrice)}원</span></div>
                         </div>
                         <div className="modal-section">
-                            <div className="modal-section-title">📶 요금제 비용</div>
+                            <div className="modal-section-title">요금제 비용</div>
                             <div className="modal-row"><span className="modal-row-label">알뜰폰 ({totalPeriod}개월)</span><span className="modal-row-value">{formatNumber(m.plan)}원</span></div>
                         </div>
                     </>
@@ -511,9 +531,9 @@ export default function Calculator() {
                 <div className="input-row-top">
                     <section className="card input-card">
                         <div className="card-header">
-                            <span className="card-icon">📲</span><h2>단말기 정보</h2>
+                            <h2>단말기 가격</h2>
                         </div>
-                        <p className="card-desc">구매하려는 단말기의 가격 정보를 입력하세요</p>
+                        <p className="card-desc">휴대폰 구매비 비교에 필요한 기기 가격을 입력하세요</p>
                         <div className="card-body">
                             <div className="input-row">
                                 <InputField label="단말기 출고가" id="devicePrice" value={devicePrice} onChange={setDevicePrice} unit="원" tooltip="통신사 공식 출고가 (SKT/KT/LGU+ 홈페이지 확인)" />
@@ -524,9 +544,9 @@ export default function Calculator() {
 
                     <section className="card input-card">
                         <div className="card-header">
-                            <span className="card-icon">⚙️</span><h2>공통 설정</h2>
+                            <h2>비교 기준</h2>
                         </div>
-                        <p className="card-desc">모든 구매 방식에 공통으로 적용되는 설정입니다</p>
+                        <p className="card-desc">휴대폰 요금 계산과 유지비 비교에 공통으로 들어가는 기준값입니다</p>
                         <div className="card-body">
                             <div className="input-row">
                                 <InputField label="총 사용 기간" id="totalPeriod" value={totalPeriod} onChange={setTotalPeriod} unit="개월" min={12} max={48} tooltip="단말기를 총 사용할 기간. 보통 24개월 기준으로 비교합니다" />
@@ -543,31 +563,31 @@ export default function Calculator() {
                 <div className="input-row-bottom">
                     <section className="card input-card card-public">
                         <div className="card-header" onClick={() => toggleSection('public')}>
-                            <span className="card-icon">💵</span><h2>공시지원금 조건</h2>
+                            <h2>공시지원금 시나리오</h2>
                             <span className={`chevron ${openSections.has('public') ? 'open' : ''}`}>▼</span>
                         </div>
-                        <p className="card-desc">통신사에서 공시한 지원금 기반의 구매 조건을 입력하세요</p>
+                        <p className="card-desc">공시지원금을 적용했을 때의 휴대폰 구매비와 유지비 조건을 입력하세요</p>
                         <div className={`card-body-wrapper ${openSections.has('public') ? 'open' : ''}`}>
                             <div className="card-body">
                                 <div className="input-row">
-                                    <InputField label="공시지원금" value={publicSubsidy} onChange={setPublicSubsidy} unit="원" tooltip="통신사가 공시한 단말기 보조금. 요금제에 따라 금액이 다릅니다" />
-                                    <InputField label="추가지원금" value={publicExtraSubsidy} onChange={setPublicExtraSubsidy} unit="원" hint="⚠️ 6개월 이전 해지 시 반환" hintClass="warning" tooltip="공시지원금에 추가 지급되는 보조금. 6개월 이내 해지 시 반환해야 합니다" />
+                                    <InputField id="publicSubsidy" label="공시지원금" value={publicSubsidy} onChange={setPublicSubsidy} unit="원" tooltip="통신사가 공시한 단말기 보조금. 요금제에 따라 금액이 다릅니다" />
+                                    <InputField id="publicExtraSubsidy" label="추가지원금" value={publicExtraSubsidy} onChange={setPublicExtraSubsidy} unit="원" hint="6개월 이전 해지 시 반환" hintClass="warning" tooltip="공시지원금에 추가 지급되는 보조금. 6개월 이내 해지 시 반환해야 합니다" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="판매점 지원금" value={publicStoreSubsidy} onChange={setPublicStoreSubsidy} unit="원" hint="반환 불필요" tooltip="대리점/매장에서 자체 지원하는 금액. 해지해도 반환 불필요" />
-                                    <InputField label="의무 유지 기간" value={publicMinMonths} onChange={setPublicMinMonths} unit="개월" min={1} max={24} hint="보통 6개월" tooltip="고가 요금제를 반드시 유지해야 하는 최소 기간" />
+                                    <InputField id="publicStoreSubsidy" label="판매점 지원금" value={publicStoreSubsidy} onChange={setPublicStoreSubsidy} unit="원" hint="반환 불필요" tooltip="대리점/매장에서 자체 지원하는 금액. 해지해도 반환 불필요" />
+                                    <InputField id="publicMinMonths" label="의무 유지 기간" value={publicMinMonths} onChange={setPublicMinMonths} unit="개월" min={1} max={24} hint="보통 6개월" tooltip="고가 요금제를 반드시 유지해야 하는 최소 기간" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="공시 요금제 (고가)" value={publicPlanCost} onChange={setPublicPlanCost} unit="원/월" hint="의무 유지 기간 동안" tooltip="의무 유지 기간 동안 사용해야 하는 요금제 월 요금" />
-                                    <InputField label="이후 요금제 (저가)" value={publicLowPlanCost} onChange={setPublicLowPlanCost} unit="원/월" hint="의무 유지 후 하향 가능" tooltip="의무 유지 후 변경 가능한 저가 요금제 월 요금" />
+                                    <InputField id="publicPlanCost" label="공시 요금제 (고가)" value={publicPlanCost} onChange={setPublicPlanCost} unit="원/월" hint="의무 유지 기간 동안" tooltip="의무 유지 기간 동안 사용해야 하는 요금제 월 요금" />
+                                    <InputField id="publicLowPlanCost" label="이후 요금제 (저가)" value={publicLowPlanCost} onChange={setPublicLowPlanCost} unit="원/월" hint="의무 유지 후 하향 가능" tooltip="의무 유지 후 변경 가능한 저가 요금제 월 요금" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="부가서비스 금액" value={publicVasCost} onChange={setPublicVasCost} unit="원/월" hint="의무 가입 부가서비스" tooltip="가입 시 필수 가입 부가서비스의 월 요금 (보험, 멤버십 등)" />
-                                    <InputField label="부가서비스 유지 기간" value={publicVasMonths} onChange={setPublicVasMonths} unit="개월" min={0} max={24} tooltip="부가서비스를 유지해야 하는 최소 기간. 이후 해지 가능" />
+                                    <InputField id="publicVasCost" label="부가서비스 금액" value={publicVasCost} onChange={setPublicVasCost} unit="원/월" hint="의무 가입 부가서비스" tooltip="가입 시 필수 가입 부가서비스의 월 요금 (보험, 멤버십 등)" />
+                                    <InputField id="publicVasMonths" label="부가서비스 유지 기간" value={publicVasMonths} onChange={setPublicVasMonths} unit="개월" min={0} max={24} tooltip="부가서비스를 유지해야 하는 최소 기간. 이후 해지 가능" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="결합할인 (고가)" value={publicHighCombineDiscount} onChange={setPublicHighCombineDiscount} unit="원/월" hint="고가 요금제 결합할인" tooltip="인터넷/TV 결합 시 고가 요금제에서 할인되는 월 금액" />
-                                    <InputField label="결합할인 (저가)" value={publicLowCombineDiscount} onChange={setPublicLowCombineDiscount} unit="원/월" hint="저가 요금제 결합할인" tooltip="인터넷/TV 결합 시 저가 요금제에서 할인되는 월 금액" />
+                                    <InputField id="publicHighCombineDiscount" label="결합할인 (고가)" value={publicHighCombineDiscount} onChange={setPublicHighCombineDiscount} unit="원/월" hint="고가 요금제 결합할인" tooltip="인터넷/TV 결합 시 고가 요금제에서 할인되는 월 금액" />
+                                    <InputField id="publicLowCombineDiscount" label="결합할인 (저가)" value={publicLowCombineDiscount} onChange={setPublicLowCombineDiscount} unit="원/월" hint="저가 요금제 결합할인" tooltip="인터넷/TV 결합 시 저가 요금제에서 할인되는 월 금액" />
                                 </div>
                             </div>
                         </div>
@@ -575,34 +595,34 @@ export default function Calculator() {
 
                     <section className="card input-card card-select">
                         <div className="card-header" onClick={() => toggleSection('select')}>
-                            <span className="card-icon">📝</span><h2>선택약정 조건</h2>
+                            <h2>선택약정 · 알뜰런 시나리오</h2>
                             <span className={`chevron ${openSections.has('select') ? 'open' : ''}`}>▼</span>
                         </div>
-                        <p className="card-desc">선택약정 할인 및 알뜰폰 이동(알뜰런) 관련 조건을 입력하세요</p>
+                        <p className="card-desc">선택약정 유지 비용과 알뜰런 이동 비용을 함께 비교할 수 있는 조건입니다</p>
                         <div className={`card-body-wrapper ${openSections.has('select') ? 'open' : ''}`}>
                             <div className="card-body">
                                 <div className="input-row">
-                                    <InputField label="추가지원금" value={selectExtraSubsidy} onChange={setSelectExtraSubsidy} unit="원" hint="⚠️ 6개월 이전 해지 시 반환" hintClass="warning" tooltip="추가 지급 보조금. 6개월 이내 해지 시 반환 필요" />
-                                    <InputField label="판매점 지원금" value={selectStoreSubsidy} onChange={setSelectStoreSubsidy} unit="원" hint="반환 불필요" tooltip="대리점/매장 자체 지원금. 해지해도 반환 불필요" />
+                                    <InputField id="selectExtraSubsidy" label="추가지원금" value={selectExtraSubsidy} onChange={setSelectExtraSubsidy} unit="원" hint="6개월 이전 해지 시 반환" hintClass="warning" tooltip="추가 지급 보조금. 6개월 이내 해지 시 반환 필요" />
+                                    <InputField id="selectStoreSubsidy" label="판매점 지원금" value={selectStoreSubsidy} onChange={setSelectStoreSubsidy} unit="원" hint="반환 불필요" tooltip="대리점/매장 자체 지원금. 해지해도 반환 불필요" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="선택약정 할인율" value={selectDiscountRate} onChange={setSelectDiscountRate} unit="%" tooltip="선택약정 시 요금제에서 할인받는 비율. 보통 25%" />
-                                    <InputField label="의무 유지 기간" value={selectMinMonths} onChange={setSelectMinMonths} unit="개월" min={1} max={24} hint="요금제 유지 필수 기간" tooltip="선택약정 요금제를 유지해야 하는 최소 기간" />
+                                    <InputField id="selectDiscountRate" label="선택약정 할인율" value={selectDiscountRate} onChange={setSelectDiscountRate} unit="%" tooltip="선택약정 시 요금제에서 할인받는 비율. 보통 25%" />
+                                    <InputField id="selectMinMonths" label="의무 유지 기간" value={selectMinMonths} onChange={setSelectMinMonths} unit="개월" min={1} max={24} hint="요금제 유지 필수 기간" tooltip="선택약정 요금제를 유지해야 하는 최소 기간" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="선택약정 요금제 (고가)" value={selectPlanCost} onChange={setSelectPlanCost} unit="원/월" hint="의무 유지 기간 동안 요금제" tooltip="선택약정 할인이 적용되는 고가 요금제 월 요금" />
-                                    <InputField label="이후 요금제 (저가)" value={selectLowPlanCost} onChange={setSelectLowPlanCost} unit="원/월" hint="의무 유지 후 변경 가능한 요금제" tooltip="의무 유지 후 변경 가능한 저가 요금제 월 요금" />
+                                    <InputField id="selectPlanCost" label="선택약정 요금제 (고가)" value={selectPlanCost} onChange={setSelectPlanCost} unit="원/월" hint="의무 유지 기간 동안 요금제" tooltip="선택약정 할인이 적용되는 고가 요금제 월 요금" />
+                                    <InputField id="selectLowPlanCost" label="이후 요금제 (저가)" value={selectLowPlanCost} onChange={setSelectLowPlanCost} unit="원/월" hint="의무 유지 후 변경 가능한 요금제" tooltip="의무 유지 후 변경 가능한 저가 요금제 월 요금" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="부가서비스 금액" value={selectVasCost} onChange={setSelectVasCost} unit="원/월" hint="의무 가입 부가서비스" tooltip="필수 가입 부가서비스 월 요금" />
-                                    <InputField label="부가서비스 유지 기간" value={selectVasMonths} onChange={setSelectVasMonths} unit="개월" min={0} max={24} tooltip="부가서비스 최소 유지 기간" />
+                                    <InputField id="selectVasCost" label="부가서비스 금액" value={selectVasCost} onChange={setSelectVasCost} unit="원/월" hint="의무 가입 부가서비스" tooltip="필수 가입 부가서비스 월 요금" />
+                                    <InputField id="selectVasMonths" label="부가서비스 유지 기간" value={selectVasMonths} onChange={setSelectVasMonths} unit="개월" min={0} max={24} tooltip="부가서비스 최소 유지 기간" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="결합할인 (고가)" value={selectHighCombineDiscount} onChange={setSelectHighCombineDiscount} unit="원/월" hint="고가 요금제 결합할인" tooltip="인터넷/TV 결합 시 고가 요금제 할인 월 금액" />
-                                    <InputField label="결합할인 (저가)" value={selectLowCombineDiscount} onChange={setSelectLowCombineDiscount} unit="원/월" hint="저가 요금제 결합할인" tooltip="인터넷/TV 결합 시 저가 요금제 할인 월 금액" />
+                                    <InputField id="selectHighCombineDiscount" label="결합할인 (고가)" value={selectHighCombineDiscount} onChange={setSelectHighCombineDiscount} unit="원/월" hint="고가 요금제 결합할인" tooltip="인터넷/TV 결합 시 고가 요금제 할인 월 금액" />
+                                    <InputField id="selectLowCombineDiscount" label="결합할인 (저가)" value={selectLowCombineDiscount} onChange={setSelectLowCombineDiscount} unit="원/월" hint="저가 요금제 결합할인" tooltip="인터넷/TV 결합 시 저가 요금제 할인 월 금액" />
                                 </div>
                                 <div className="input-row">
-                                    <InputField label="알뜰런 이동 시점" value={mvnoMoveMonths} onChange={setMvnoMoveMonths} unit="개월 후" min={1} max={24} hint="이 기간 후 알뜰폰 이동" tooltip="선택약정 후 몇 개월 뒤 알뜰폰으로 이동할지 설정. 최적 타이밍은 하단 차트에서 확인" />
+                                    <InputField id="mvnoMoveMonths" label="알뜰런 이동 시점" value={mvnoMoveMonths} onChange={setMvnoMoveMonths} unit="개월 후" min={1} max={24} hint="이 기간 후 알뜰폰 이동" tooltip="선택약정 후 몇 개월 뒤 알뜰폰으로 이동할지 설정. 최적 타이밍은 하단 차트에서 확인" />
                                 </div>
                             </div>
                         </div>
@@ -615,13 +635,13 @@ export default function Calculator() {
 
             {/* Phase 8: Disclaimer banner */}
             <div className="disclaimer-banner">
-                <span className="disclaimer-icon">⚠️</span>
-                <span>정확한 비교를 위해 위 공시지원금 조건과 선택약정 조건을 모두 입력해주세요. 결과는 참고용이며, 실제 비용은 통신사 정책에 따라 달라질 수 있습니다.</span>
+                <span className="disclaimer-icon">안내</span>
+                <span>입력값에 따라 휴대폰 요금과 유지비 결과가 달라집니다. 공시지원금과 선택약정 조건을 함께 넣어야 비교가 더 정확해집니다.</span>
             </div>
 
             {/* 5가지 방식 비교 */}
             <section className="comparison-section" ref={comparisonRef}>
-                <h2 className="section-title"><span className="title-icon">⚖️</span>5가지 방식 비교</h2>
+                <h2 className="section-title">휴대폰 총비용 비교</h2>
                 <div className="comparison-cards">
                     {results.methods.map((m, i) => (
                         <div key={i} className={`method-card ${m.rank === 1 ? 'best' : ''} ${m.rank === 2 ? 'featured' : ''} ${flashCards.has(i) ? 'result-updated' : ''}`}>
@@ -631,11 +651,11 @@ export default function Calculator() {
                             </div>
                             <h3 className="method-title">{methodNames[i]}</h3>
                             <p className="method-desc">
-                                {i === 0 && `공시지원금 + ${totalPeriod}개월 유지`}
-                                {i === 1 && `선택약정 ${selectDiscountRate}% 할인 + ${totalPeriod}개월 유지`}
-                                {i === 2 && `선택약정 ${selectDiscountRate}% + 추가지원금 (고가 6개월 필수) + ${totalPeriod}개월`}
-                                {i === 3 && `선택약정 후 ${mvnoMoveMonths}개월 뒤 알뜰폰 이동`}
-                                {i === 4 && `자급제 구매 + 처음부터 알뜰폰`}
+                                {i === 0 && `공시지원금을 적용한 뒤 ${totalPeriod}개월 동안 사용하는 기준`}
+                                {i === 1 && `선택약정 ${selectDiscountRate}% 할인 기준으로 ${totalPeriod}개월 유지`}
+                                {i === 2 && `추가지원금을 포함한 선택약정 시나리오 비교`}
+                                {i === 3 && `${mvnoMoveMonths}개월 후 알뜰폰으로 이동하는 알뜰런 시나리오`}
+                                {i === 4 && `자급제 구매 후 알뜰폰 요금제를 바로 쓰는 기준`}
                             </p>
                             <div className="method-total">
                                 <span className="total-label">총 비용</span>
@@ -645,7 +665,7 @@ export default function Calculator() {
                                 <span className="monthly-label">월 평균</span>
                                 <span className="monthly-value">{formatNumber(m.monthly)}원</span>
                             </div>
-                            <button className="detail-btn" onClick={() => setActiveModal(i + 1)}>📋 상세보기</button>
+                            <button className="detail-btn" onClick={() => setActiveModal(i + 1)}>비용 내역 보기</button>
                         </div>
                     ))}
                 </div>
@@ -655,23 +675,20 @@ export default function Calculator() {
             <section className="savings-section">
                 <div className="savings-grid">
                     <div className="savings-item best">
-                        <span className="savings-icon">🏆</span>
                         <div className="savings-content">
-                            <span className="savings-label">최적의 선택</span>
+                            <span className="savings-label">가장 낮은 총비용</span>
                             <span className="savings-method">{methodNames[results.bestIndex]}</span>
                         </div>
                     </div>
                     <div className="savings-item">
-                        <span className="savings-icon">💰</span>
                         <div className="savings-content">
-                            <span className="savings-label">공시지원금 대비 절약</span>
+                            <span className="savings-label">공시지원금 대비 차이</span>
                             <span className="savings-amount">{formatNumber(results.savings)}원</span>
                         </div>
                     </div>
                     <div className="savings-item">
-                        <span className="savings-icon">📊</span>
                         <div className="savings-content">
-                            <span className="savings-label">절약률</span>
+                            <span className="savings-label">절감 비율</span>
                             <span className="savings-percent">{results.savingsPercent.toFixed(1)}%</span>
                         </div>
                     </div>
@@ -680,15 +697,18 @@ export default function Calculator() {
 
             {/* 타이밍 분석 */}
             <section className="card timing-card">
-                <div className="card-header"><span className="card-icon">⏱️</span><h2>알뜰런 최적 타이밍 분석</h2></div>
+                <div className="card-header"><h2>알뜰런 이동 시점 비교</h2></div>
                 <div className="card-body">
-                    <p className="timing-desc">선택약정+알뜰런 방식에서 언제 이동하는 것이 가장 유리한지 분석합니다.</p>
+                    <p className="timing-desc">선택약정 후 알뜰폰으로 옮기는 시점에 따라 휴대폰 총비용이 어떻게 달라지는지 확인합니다.</p>
                     <div className="timing-chart">
                         {results.timing.costs.map((c) => (
                             <div key={c.month}
                                 className={`timing-bar ${c.month === results.timing.optimalMonth ? 'optimal' : Math.abs(c.total - results.timing.minCost) < results.timing.minCost * 0.02 ? 'good' : ''}`}
+                                role="button"
+                                tabIndex={0}
                                 onClick={() => setMvnoMoveMonths(c.month)}
-                                title={`${c.month}개월 유지 시 총 ${formatNumber(c.total)}원`}
+                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setMvnoMoveMonths(c.month); } }}
+                                aria-label={`${c.month}개월 유지 시 총 ${formatNumber(c.total)}원`}
                             >
                                 <span className="month">{c.month}개월</span>
                                 <span className="cost">{Math.round(c.monthly / 1000)}K</span>
@@ -696,8 +716,7 @@ export default function Calculator() {
                         ))}
                     </div>
                     <div className="timing-recommendation">
-                        <span className="rec-icon">💡</span>
-                        <span className="rec-text">{results.timing.optimalMonth}개월 유지 후 이동 시 가장 효율적입니다. (총 {formatNumber(results.timing.minCost)}원)</span>
+                        <span className="rec-text">{results.timing.optimalMonth}개월 유지 후 이동했을 때 총비용이 가장 낮습니다. (총 {formatNumber(results.timing.minCost)}원)</span>
                     </div>
                 </div>
             </section>
@@ -705,7 +724,7 @@ export default function Calculator() {
             {/* Modal */}
             <div className={`modal-overlay ${activeModal ? 'active' : ''}`} onClick={(e) => { if (e.target === e.currentTarget) setActiveModal(null); }}>
                 {activeModal && (
-                    <div className="modal">
+                    <div className="modal" ref={modalRef} role="dialog" aria-modal="true" tabIndex={-1}>
                         <div className="modal-header">
                             <h3 className="modal-title">{methodNames[activeModal - 1]} 상세 내역</h3>
                             <button className="modal-close" onClick={() => setActiveModal(null)}>&times;</button>
@@ -758,11 +777,11 @@ interface InputFieldProps {
 
 function InputField({ label, value, onChange, unit, id, min, max, hint, hintClass, tooltip }: InputFieldProps) {
     const [isFocused, setIsFocused] = useState(false);
-    const [displayValue, setDisplayValue] = useState(value.toLocaleString('ko-KR'));
+    const [displayValue, setDisplayValue] = useState(() => formatInputThousands(value));
 
     useEffect(() => {
         if (!isFocused) {
-            setDisplayValue(value.toLocaleString('ko-KR'));
+            setDisplayValue(formatInputThousands(value));
         }
     }, [value, isFocused]);
 
@@ -773,7 +792,7 @@ function InputField({ label, value, onChange, unit, id, min, max, hint, hintClas
 
     const handleBlur = () => {
         setIsFocused(false);
-        setDisplayValue(value.toLocaleString('ko-KR'));
+        setDisplayValue(formatInputThousands(value));
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
