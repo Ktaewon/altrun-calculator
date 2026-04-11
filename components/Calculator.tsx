@@ -31,8 +31,8 @@ interface MethodResult extends CalculationResult {
 
 const methodNames = ['공시지원금', '선택약정', '선택약정+추가지원금', '선택약정+알뜰런', '자급제+알뜰폰'];
 
-function formatInputThousands(num: number): string {
-    return String(Math.round(num)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+function formatNumber(num: number): string {
+    return Math.round(num).toLocaleString('ko-KR');
 }
 
 export default function Calculator() {
@@ -126,7 +126,6 @@ export default function Calculator() {
     const [flashCards, setFlashCards] = useState<Set<number>>(new Set());
 
     // --- Helpers ---
-    const formatNumber = (num: number) => Math.round(num).toLocaleString('ko-KR');
 
     // --- Results Calculation ---
     const results = useMemo(() => {
@@ -777,11 +776,11 @@ interface InputFieldProps {
 
 function InputField({ label, value, onChange, unit, id, min, max, hint, hintClass, tooltip }: InputFieldProps) {
     const [isFocused, setIsFocused] = useState(false);
-    const [displayValue, setDisplayValue] = useState(() => formatInputThousands(value));
+    const [displayValue, setDisplayValue] = useState(() => formatNumber(value));
 
     useEffect(() => {
         if (!isFocused) {
-            setDisplayValue(formatInputThousands(value));
+            setDisplayValue(formatNumber(value));
         }
     }, [value, isFocused]);
 
@@ -792,7 +791,7 @@ function InputField({ label, value, onChange, unit, id, min, max, hint, hintClas
 
     const handleBlur = () => {
         setIsFocused(false);
-        setDisplayValue(formatInputThousands(value));
+        setDisplayValue(formatNumber(value));
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
