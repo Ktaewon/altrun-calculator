@@ -55,6 +55,7 @@ const steps: Array<{ id: StepId; title: string; eyebrow: string; guide: string }
 ];
 
 const numericStepIds: StepId[] = ["device", "baseline", "public", "select"];
+const defaultCoupangSelfPhoneUrl = "https://link.coupang.com/a/dO199u8mv6";
 
 function clampNumber(value: number, min?: number, max?: number) {
     if (min !== undefined && value < min) return min;
@@ -66,7 +67,9 @@ function buildCoupangUrl(modelName: string, resultMode: "search" | "self") {
     const query = encodeURIComponent(modelName.trim() || "자급제폰");
     const envSearch = process.env.NEXT_PUBLIC_COUPANG_PHONE_SEARCH_URL;
     const envSelf = process.env.NEXT_PUBLIC_COUPANG_SELF_PHONE_URL;
-    const candidate = resultMode === "self" ? envSelf || envSearch : envSearch || envSelf;
+    const candidate = resultMode === "self"
+        ? envSelf || defaultCoupangSelfPhoneUrl
+        : envSearch || envSelf || defaultCoupangSelfPhoneUrl;
 
     if (candidate) {
         if (candidate.includes("{query}")) return candidate.replace("{query}", query);
