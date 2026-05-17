@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CoupangDynamicBanner from "@/components/CoupangDynamicBanner";
 import KakaoAdFit from "@/components/KakaoAdFit";
 import {
@@ -228,8 +228,6 @@ function DeviceStep({
     inputs: PhoneCalculationInputs;
     setNumber: (key: keyof PhoneCalculationInputs, min?: number, max?: number) => (value: number) => void;
 }) {
-    const hasModelName = modelName.trim().length > 0;
-
     return (
         <div className="guided-step-grid">
             <CoupangSearchWidget modelName={modelName} />
@@ -558,9 +556,15 @@ function AffiliateCard({ title, body, href, cta }: { title: string; body: string
 }
 
 function CoupangSearchWidget({ modelName }: { modelName: string }) {
-    const trimmedModelName = modelName.trim();
+    const [debouncedModelName, setDebouncedModelName] = useState(modelName);
+    const trimmedModelName = debouncedModelName.trim();
     const widgetUrl = buildCoupangWidgetUrl(trimmedModelName);
     const [copied, setCopied] = useState(false);
+
+    useEffect(() => {
+        const timer = window.setTimeout(() => setDebouncedModelName(modelName), 600);
+        return () => window.clearTimeout(timer);
+    }, [modelName]);
 
     const copyModelName = async () => {
         if (!trimmedModelName) return;

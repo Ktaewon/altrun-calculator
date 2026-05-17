@@ -5,7 +5,16 @@ function getCoupangDisclosure() {
         "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.";
 }
 
+function parseEnvNumber(value: string | undefined, fallback: number) {
+    const parsed = value ? Number(value) : fallback;
+    return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 export default function CoupangDynamicBanner() {
+    const mobileBannerId = parseEnvNumber(process.env.NEXT_PUBLIC_COUPANG_DYNAMIC_MOBILE_ID, 989770);
+    const pcBannerId = parseEnvNumber(process.env.NEXT_PUBLIC_COUPANG_DYNAMIC_PC_ID, 989765);
+    const trackingCode = process.env.NEXT_PUBLIC_COUPANG_TRACKING_CODE || "AF2405874";
+
     const bannerHtml = `
         <!doctype html>
         <html lang="ko">
@@ -22,9 +31,9 @@ export default function CoupangDynamicBanner() {
                 <script>
                     var isMobile = window.matchMedia("(max-width: 640px)").matches;
                     new PartnersCoupang.G({
-                        "id": isMobile ? 989770 : 989765,
+                        "id": isMobile ? ${mobileBannerId} : ${pcBannerId},
                         "template": "carousel",
-                        "trackingCode": "AF2405874",
+                        "trackingCode": ${JSON.stringify(trackingCode)},
                         "width": isMobile ? "360" : "720",
                         "height": "100",
                         "tsource": ""
