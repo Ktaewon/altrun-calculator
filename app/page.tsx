@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Calculator from "@/components/Calculator";
+import CoupangEventBanner from "@/components/CoupangEventBanner";
 import KakaoAdFit from "@/components/KakaoAdFit";
 import { siteDescription, siteKeywords, siteName, siteUrl } from "@/lib/site";
 
@@ -26,6 +27,9 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+    const kakaoAdFitPcUnit = process.env.NEXT_PUBLIC_KAKAO_ADFIT_PC_UNIT;
+    const kakaoAdFitMobileUnit = process.env.NEXT_PUBLIC_KAKAO_ADFIT_MOBILE_UNIT;
+
     const webApplicationJsonLd = {
         "@context": "https://schema.org",
         "@type": "WebApplication",
@@ -74,16 +78,23 @@ export default function Home() {
                     <span className="hero-pill">자급제 비교</span>
                     <span className="hero-pill">알뜰런 시나리오</span>
                 </div>
-                <a href="#calculator" className="hero-cta">비용 비교 시작하기</a>
+                <div className="hero-actions">
+                    <Link href="/guided" className="hero-cta">가이드 계산기로 쉽게 비교하기</Link>
+                    <a href="#calculator" className="hero-cta secondary">기존 계산기 바로 사용</a>
+                </div>
             </header>
+
+            <CoupangEventBanner />
 
             {/* Ad Section */}
             <div className="ad-section text-center">
                 {/* Top Banner */}
-                <KakaoAdFit
-                    pc={{ unit: process.env.NEXT_PUBLIC_KAKAO_ADFIT_PC_UNIT!, width: 728, height: 90 }}
-                    mobile={{ unit: process.env.NEXT_PUBLIC_KAKAO_ADFIT_MOBILE_UNIT!, width: 320, height: 100 }}
-                />
+                {kakaoAdFitPcUnit && kakaoAdFitMobileUnit && (
+                    <KakaoAdFit
+                        pc={{ unit: kakaoAdFitPcUnit, width: 728, height: 90 }}
+                        mobile={{ unit: kakaoAdFitMobileUnit, width: 320, height: 100 }}
+                    />
+                )}
             </div>
 
             <main className="main-content space-y-8">
@@ -92,10 +103,12 @@ export default function Home() {
                 {/* Ad Section */}
                 <div className="ad-section text-center">
                     {/* Middle Banner */}
-                    <KakaoAdFit
-                    pc={{ unit: process.env.NEXT_PUBLIC_KAKAO_ADFIT_PC_UNIT!, width: 728, height: 90 }}
-                    mobile={{ unit: process.env.NEXT_PUBLIC_KAKAO_ADFIT_MOBILE_UNIT!, width: 320, height: 100 }}
-                />
+                    {kakaoAdFitPcUnit && kakaoAdFitMobileUnit && (
+                        <KakaoAdFit
+                            pc={{ unit: kakaoAdFitPcUnit, width: 728, height: 90 }}
+                            mobile={{ unit: kakaoAdFitMobileUnit, width: 320, height: 100 }}
+                        />
+                    )}
                 </div>
 
 

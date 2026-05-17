@@ -39,6 +39,7 @@ export default function Navbar() {
 
           <div className="nav-links">
             <Link href="/" className="nav-link">비용 계산</Link>
+            <Link href="/guided" className="nav-link">가이드 계산</Link>
             <Link href="/guide" className="nav-link">구매 방식 가이드</Link>
             <Link href="/privacy" className="nav-link">개인정보처리방침</Link>
           </div>
@@ -66,6 +67,7 @@ export default function Navbar() {
             <ThemeToggle />
           </div>
           <Link href="/" className="mobile-dropdown-link" onClick={closeMenu}>비용 계산</Link>
+          <Link href="/guided" className="mobile-dropdown-link" onClick={closeMenu}>가이드 계산</Link>
           <Link href="/guide" className="mobile-dropdown-link" onClick={closeMenu}>구매 방식 가이드</Link>
           <Link href="/privacy" className="mobile-dropdown-link" onClick={closeMenu}>개인정보처리방침</Link>
         </div>

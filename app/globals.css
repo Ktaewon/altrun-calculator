@@ -396,7 +396,8 @@ body {
 .tooltip-text {
     position: absolute;
     top: calc(100% + 8px);
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     background: var(--bg-card);
     color: var(--text-secondary);
     font-size: 0.75rem;
@@ -421,12 +422,29 @@ body {
     content: '';
     position: absolute;
     bottom: 100%;
-    left: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     border: 5px solid transparent;
     border-bottom-color: var(--border);
 }
 
 .tooltip-wrap:hover .tooltip-text {
+    opacity: 1;
+    visibility: visible;
+}
+
+.tooltip-wrap:focus-visible {
+    outline: none;
+}
+
+.tooltip-wrap:focus-visible .tooltip-icon {
+    opacity: 1;
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.tooltip-wrap:focus-visible .tooltip-text {
     opacity: 1;
     visibility: visible;
 }
@@ -482,6 +500,12 @@ body {
 
 .hint.warning {
     color: var(--warning);
+}
+
+.required-mark {
+    color: var(--danger);
+    font-weight: 900;
+    margin-left: 0.2rem;
 }
 
 /* Section Title */
@@ -1290,6 +1314,7 @@ input[type="number"] {
     .tooltip-text {
         left: 0;
         right: 0;
+        transform: none;
         min-width: 0;
         max-width: none;
         width: auto;
@@ -1297,6 +1322,7 @@ input[type="number"] {
 
     .tooltip-text::after {
         left: 12px;
+        transform: none;
     }
 }
 
@@ -2500,4 +2526,474 @@ input[type="number"] {
 
 :root[data-theme="light"] .card-select:hover {
     border-color: rgba(71, 85, 194, 0.4);
+}
+
+/* Guided calculator */
+.hero-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.hero-cta.secondary {
+    background: var(--surface-2);
+    color: var(--text-primary);
+    border: 1px solid var(--surface-border-strong);
+    box-shadow: none;
+}
+
+.hero-cta.secondary:hover {
+    background: var(--surface-3);
+}
+
+.guided-header {
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.guided-calculator {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.guided-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    padding: 1rem 1.25rem;
+    box-shadow: var(--shadow);
+}
+
+.guided-progress-copy {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.guided-progress-copy span,
+.guided-step-eyebrow,
+.affiliate-label,
+.guide-bubble-label {
+    display: inline-flex;
+    width: fit-content;
+    border-radius: 999px;
+    background: var(--brand-chip-bg);
+    color: var(--primary-light);
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 0.2rem 0.55rem;
+}
+
+.guided-progress-copy strong {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    text-align: right;
+}
+
+.guided-progress-track {
+    height: 10px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    overflow: hidden;
+}
+
+.guided-progress-track span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+    transition: width 0.25s ease;
+}
+
+.guided-panel,
+.guided-result-hero,
+.affiliate-card,
+.coupang-widget-card {
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    box-shadow: var(--shadow);
+}
+
+.guided-panel {
+    padding: 1.5rem;
+}
+
+.guided-panel-header {
+    margin-bottom: 1.5rem;
+}
+
+.guided-panel-header h2,
+.guided-result-hero h2,
+.affiliate-card h3 {
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.guided-panel-header h2 {
+    margin-top: 0.75rem;
+    font-size: 1.55rem;
+}
+
+.guide-bubble {
+    position: relative;
+    margin-top: 1rem;
+    border: 1px solid var(--surface-border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface-1);
+    padding: 1rem 1.1rem;
+}
+
+.guide-bubble::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: 28px;
+    width: 14px;
+    height: 14px;
+    background: var(--bg-card);
+    border-left: 1px solid var(--surface-border-strong);
+    border-top: 1px solid var(--surface-border-strong);
+    transform: rotate(45deg);
+}
+
+.guide-bubble p {
+    position: relative;
+    margin-top: 0.65rem;
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    line-height: 1.65;
+}
+
+.guided-step-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.guided-wide-field {
+    grid-column: 1 / -1;
+}
+
+.guided-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--surface-border);
+}
+
+.guided-btn,
+.affiliate-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.92rem;
+    font-weight: 800;
+    text-decoration: none;
+    padding: 0.75rem 1.1rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.guided-btn:hover,
+.affiliate-link:hover {
+    transform: translateY(-1px);
+    background: var(--primary-dark);
+}
+
+.guided-btn.secondary {
+    background: var(--surface-2);
+    color: var(--text-primary);
+    border-color: var(--surface-border-strong);
+}
+
+.guided-btn.secondary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.affiliate-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(231, 194, 125, 0.08) 100%);
+}
+
+.affiliate-card h3 {
+    margin-top: 0.65rem;
+    font-size: 1.1rem;
+}
+
+.affiliate-card p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    margin-top: 0.35rem;
+}
+
+.affiliate-disclosure {
+    color: var(--text-muted) !important;
+    font-size: 0.76rem !important;
+}
+
+.coupang-widget-card {
+    grid-column: 1 / -1;
+    padding: 1.25rem;
+    background: var(--surface-1);
+}
+
+.coupang-widget-copy {
+    margin-bottom: 1rem;
+}
+
+.coupang-widget-copy h3 {
+    margin-top: 0.65rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    line-height: 1.3;
+}
+
+.coupang-widget-copy p {
+    margin-top: 0.35rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.coupang-search-widget {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+    height: 44px;
+    border: 0;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.coupang-model-chip-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.coupang-model-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    border-radius: 999px;
+    background: var(--brand-chip-bg);
+    color: var(--text-primary);
+    font-size: 0.86rem;
+    font-weight: 800;
+    padding: 0.35rem 0.8rem;
+}
+
+.coupang-copy-btn {
+    min-height: 32px;
+    border: 1px solid var(--surface-border-strong);
+    border-radius: 999px;
+    background: var(--surface-2);
+    color: var(--text-primary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 0.35rem 0.8rem;
+    cursor: pointer;
+}
+
+.coupang-copy-btn:hover {
+    border-color: var(--primary);
+}
+
+.coupang-event-slot,
+.coupang-dynamic-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    width: 100%;
+}
+
+.coupang-event-slot {
+    margin: 0 auto 1.5rem;
+}
+
+.coupang-event-banner {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 728px;
+    aspect-ratio: 728 / 90;
+    overflow: hidden;
+}
+
+.coupang-event-banner img {
+    display: block;
+    width: 100%;
+    max-width: 728px;
+    height: 100%;
+    object-fit: contain;
+}
+
+.coupang-dynamic-banner-frame {
+    display: block;
+    width: 100%;
+    max-width: 720px;
+    height: 100px;
+    min-height: 100px;
+    border: 0;
+    background: transparent;
+    overflow: hidden;
+}
+
+.guided-review {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.guided-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.guided-summary-item {
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-sm);
+    background: var(--surface-1);
+    padding: 0.9rem;
+}
+
+.guided-summary-item span {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.74rem;
+    margin-bottom: 0.3rem;
+}
+
+.guided-summary-item strong {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.guided-ad-block {
+    display: flex;
+    justify-content: center;
+    min-height: 120px;
+    border: 1px dashed var(--surface-border-strong);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+}
+
+.guided-preview-note {
+    color: var(--text-secondary);
+    text-align: center;
+    font-size: 0.92rem;
+}
+
+.guided-results {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.guided-result-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem;
+}
+
+.guided-result-hero h2 {
+    margin-top: 0.75rem;
+    font-size: 1.6rem;
+}
+
+.guided-result-hero p {
+    margin-top: 0.5rem;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 980px) {
+    .guided-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .hero-actions,
+    .guided-actions,
+    .guided-result-hero,
+    .affiliate-card {
+        flex-direction: column;
+        display: flex;
+        align-items: stretch;
+    }
+
+    .guided-progress-copy {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .guided-progress-copy strong {
+        text-align: left;
+    }
+
+    .guided-step-grid,
+    .guided-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .guided-panel,
+    .guided-result-hero,
+    .affiliate-card,
+    .coupang-widget-card {
+        padding: 1rem;
+    }
+
+    .coupang-event-slot,
+    .coupang-dynamic-banner {
+        width: calc(100% + 2rem);
+        margin-left: -1rem;
+        margin-right: -1rem;
+    }
+
+    .coupang-event-banner,
+    .coupang-dynamic-banner-frame {
+        max-width: none;
+    }
+
+    .coupang-dynamic-banner-frame {
+        height: 100px;
+        min-height: 100px;
+    }
+
+    .guided-btn,
+    .affiliate-link,
+    .hero-cta {
+        width: 100%;
+    }
 }
