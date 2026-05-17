@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import CoupangDynamicBanner from '@/components/CoupangDynamicBanner';
 
 // Types
 interface CalculationResult {
@@ -629,8 +630,7 @@ export default function Calculator() {
                 </div>
             </div>
 
-            {/* Ad Placeholder */}
-            {/* <div className="ad-section">...</div> */}
+            <CoupangDynamicBanner />
 
             {/* Phase 8: Disclaimer banner */}
             <div className="disclaimer-banner">
