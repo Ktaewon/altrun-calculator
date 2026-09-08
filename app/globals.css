@@ -780,42 +780,7 @@ body {
 
 /* Savings Section */
 .savings-section {
-    margin-bottom: 1.25rem;
-}
-
-.result-cta-wrap {
-    display: flex;
-    justify-content: center;
     margin-bottom: 2rem;
-}
-
-.result-cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 48px;
-    min-width: min(100%, 320px);
-    border-radius: var(--radius-sm);
-    border: 1px solid transparent;
-    background: var(--primary);
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 800;
-    text-decoration: none;
-    padding: 0.85rem 1.5rem;
-    cursor: pointer;
-    transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.result-cta:hover {
-    transform: translateY(-1px);
-    background: var(--primary-dark);
-}
-
-.result-cta:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-    transform: none;
 }
 
 .savings-grid {
