@@ -23,5 +23,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: "monthly",
             priority: 0.4,
         },
+        {
+            url: `${siteUrl}/calc/seontaek-penalty`,
+            lastModified,
+            changeFrequency: "monthly",
+            priority: 0.6,
+        },
     ];
 }
