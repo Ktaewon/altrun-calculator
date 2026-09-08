@@ -7,6 +7,9 @@ export const siteTitle = "휴대폰 비용 계산기 | 알뜰런 · 요금제 ·
 export const siteDescription =
     "휴대폰 요금 계산기이자 유지비 계산기로 공시지원금, 선택약정, 자급제, 알뜰런 시나리오를 같은 기준에서 비교합니다.";
 
+/** 알뜰폰 이동 CTA 클릭 대상. Netlify 등 배포 환경에서 NEXT_PUBLIC_MVNO_MOVE_URL 로 설정합니다. */
+export const mvnoMoveUrl = process.env.NEXT_PUBLIC_MVNO_MOVE_URL ?? "";
+
 export const siteKeywords = [
     "알뜰런 계산기",
     "휴대폰 요금 계산기",

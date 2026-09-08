@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import CoupangDynamicBanner from '@/components/CoupangDynamicBanner';
+import { mvnoMoveUrl } from '@/lib/site';
 
 // Types
 interface CalculationResult {
@@ -693,6 +694,23 @@ export default function Calculator() {
                     </div>
                 </div>
             </section>
+
+            <div className="result-cta-wrap">
+                {mvnoMoveUrl ? (
+                    <a
+                        className="result-cta"
+                        href={mvnoMoveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        알뜰폰으로 옮기기
+                    </a>
+                ) : (
+                    <button className="result-cta" type="button" disabled aria-disabled="true">
+                        알뜰폰으로 옮기기
+                    </button>
+                )}
+            </div>
 
             {/* 타이밍 분석 */}
             <section className="card timing-card">
